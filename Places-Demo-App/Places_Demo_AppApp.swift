@@ -2,8 +2,6 @@
 //  Places_Demo_AppApp.swift
 //  Places-Demo-App
 //
-//  Created by Bobi Afsheh on 2/10/26.
-//
 
 import SwiftUI
 
@@ -11,7 +9,7 @@ import SwiftUI
 struct Places_Demo_AppApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            LocationListView(viewModel: DependencyContainer.makeLocationsListViewModel())
         }
     }
 }
