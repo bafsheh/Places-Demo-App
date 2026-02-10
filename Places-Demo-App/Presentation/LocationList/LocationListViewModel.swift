@@ -9,9 +9,14 @@ final class LocationListViewModel {
     var isCustomLocationSheetPresented = false
 
     private let fetchLocationsUseCase: FetchLocationsUseCase
+    private let openWikipediaUseCase: OpenWikipediaUseCase
 
-    init(fetchLocationsUseCase: FetchLocationsUseCase) {
+    init(
+        fetchLocationsUseCase: FetchLocationsUseCase,
+        openWikipediaUseCase: OpenWikipediaUseCase
+    ) {
         self.fetchLocationsUseCase = fetchLocationsUseCase
+        self.openWikipediaUseCase = openWikipediaUseCase
     }
 
     func loadLocations() async {
@@ -26,6 +31,11 @@ final class LocationListViewModel {
     }
 
     func openLocation(_ location: Location) async {
+        do {
+            try await openWikipediaUseCase.execute(location: location)
+        } catch {
+            state = .error(error.localizedDescription)
+        }
     }
 
     func showCustomLocationSheet() {
