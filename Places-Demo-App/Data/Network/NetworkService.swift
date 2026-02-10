@@ -1,11 +1,19 @@
+//
+//  NetworkService.swift
+//  Places-Demo-App
+//
+
 import Foundation
 
-final class NetworkService: NetworkServiceProtocol {
+/// Actor that performs HTTP requests and decodes JSON responses.
+/// Isolates network I/O and is safe to use from concurrent contexts.
+actor NetworkService: NetworkServiceProtocol {
 
     private let session: URLSession
     private let configuration: NetworkConfiguration
     private let decoder: JSONDecoder
 
+    /// Creates a network service with optional custom session and decoder.
     init(
         session: URLSession = .shared,
         configuration: NetworkConfiguration,
@@ -16,6 +24,7 @@ final class NetworkService: NetworkServiceProtocol {
         self.decoder = decoder
     }
 
+    /// Performs a network request for the given endpoint and decodes the response.
     func request<T: Decodable>(_ endpoint: EndpointProtocol) async throws -> T {
         let request = try endpoint.urlRequest(with: configuration)
 
@@ -32,7 +41,7 @@ final class NetworkService: NetworkServiceProtocol {
         do {
             return try decoder.decode(T.self, from: data)
         } catch {
-            throw NetworkError.decodingError(error)
+            throw NetworkError.decodingError(error.localizedDescription)
         }
     }
 }
