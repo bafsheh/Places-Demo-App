@@ -8,12 +8,12 @@ final class LocationListViewModel {
     private(set) var state: ViewState<[Location]> = .idle
     var isCustomLocationSheetPresented = false
 
-    private let fetchLocationsUseCase: FetchLocationsUseCase
-    private let openWikipediaUseCase: OpenWikipediaUseCase
+    private let fetchLocationsUseCase: FetchLocationsUseCaseProtocol
+    private let openWikipediaUseCase: OpenWikipediaUseCaseProtocol
 
     init(
-        fetchLocationsUseCase: FetchLocationsUseCase,
-        openWikipediaUseCase: OpenWikipediaUseCase
+        fetchLocationsUseCase: FetchLocationsUseCaseProtocol,
+        openWikipediaUseCase: OpenWikipediaUseCaseProtocol
     ) {
         self.fetchLocationsUseCase = fetchLocationsUseCase
         self.openWikipediaUseCase = openWikipediaUseCase

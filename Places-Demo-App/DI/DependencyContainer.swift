@@ -1,6 +1,21 @@
 import Foundation
 import UIKit
 
+/// Holds protocol-typed dependencies so screens and tests can use the same resolution API.
+/// Use `DependencyContainer.live` in the app and `DependencyContainer.test(fetchLocations:openWikipedia:)` in tests.
+struct Dependencies: Sendable {
+
+    let fetchLocationsUseCase: FetchLocationsUseCaseProtocol
+    let openWikipediaUseCase: OpenWikipediaUseCaseProtocol
+
+    func makeLocationsListViewModel() -> LocationListViewModel {
+        LocationListViewModel(
+            fetchLocationsUseCase: fetchLocationsUseCase,
+            openWikipediaUseCase: openWikipediaUseCase
+        )
+    }
+}
+
 @MainActor
 enum DependencyContainer {
 
@@ -21,17 +36,32 @@ enum DependencyContainer {
         deepLinkService: deepLinkService
     )
 
-    static let fetchLocationsUseCase = FetchLocationsUseCase(
+    private static let fetchLocationsUseCase: FetchLocationsUseCaseProtocol = FetchLocationsUseCase(
         repository: locationRepository
     )
-    static let openWikipediaUseCase = OpenWikipediaUseCase(
+    private static let openWikipediaUseCase: OpenWikipediaUseCaseProtocol = OpenWikipediaUseCase(
         deepLinkService: wikipediaDeepLinkService
     )
 
-    static func makeLocationsListViewModel() -> LocationListViewModel {
-        LocationListViewModel(
-            fetchLocationsUseCase: fetchLocationsUseCase,
-            openWikipediaUseCase: openWikipediaUseCase
+    /// Live dependencies (production implementations). Use in the app entry point.
+    static let live = Dependencies(
+        fetchLocationsUseCase: fetchLocationsUseCase,
+        openWikipediaUseCase: openWikipediaUseCase
+    )
+
+    /// Test dependencies with injected use cases. Use in unit tests to provide mocks.
+    static func test(
+        fetchLocations: FetchLocationsUseCaseProtocol,
+        openWikipedia: OpenWikipediaUseCaseProtocol
+    ) -> Dependencies {
+        Dependencies(
+            fetchLocationsUseCase: fetchLocations,
+            openWikipediaUseCase: openWikipedia
         )
+    }
+
+    /// Builds the locations list ViewModel using live dependencies. Prefer `DependencyContainer.live.makeLocationsListViewModel()` for new code.
+    static func makeLocationsListViewModel() -> LocationListViewModel {
+        live.makeLocationsListViewModel()
     }
 }

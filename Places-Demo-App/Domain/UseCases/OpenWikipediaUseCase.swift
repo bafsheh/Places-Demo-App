@@ -1,7 +1,13 @@
 import Foundation
 
-/// Use case responsible for opening Wikipedia app with deep link
-final class OpenWikipediaUseCase: Sendable {
+/// Protocol for opening Wikipedia at a location. Allows injection of mocks in tests.
+protocol OpenWikipediaUseCaseProtocol: Sendable {
+    /// Opens Wikipedia Places tab at the specified location.
+    func execute(location: Location) async throws
+}
+
+/// Use case responsible for opening Wikipedia app with deep link.
+final class OpenWikipediaUseCase: OpenWikipediaUseCaseProtocol {
 
     private let deepLinkService: WikipediaDeepLinkServiceProtocol
 

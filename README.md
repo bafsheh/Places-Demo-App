@@ -11,11 +11,18 @@ iOS app demonstrating Wikipedia deep linking with Clean Architecture.
 
 ## Architecture
 
-- **Domain**: `Location` entity, `LocationsRepositoryProtocol`, `FetchLocationsUseCase`, `OpenWikipediaUseCase`
-- **Data**: `LocationDTO`, `RemoteDataSource`, `LocationsRepository`
-- **Infrastructure**: `NetworkService`, `NetworkConfiguration`, `WikipediaDeepLinkService`
-- **Presentation**: `LocationsListView`, `LocationsListViewModel`, `LocationRow`, `CustomLocationSheet`, `ErrorView`
-- **DI**: `DependencyContainer` wires dependencies
+- **Domain**: `Location` entity, `LocationsRepositoryProtocol`, use case protocols and implementations (`FetchLocationsUseCaseProtocol`, `OpenWikipediaUseCaseProtocol`)
+- **Data**: `LocationDTO`, `LocationsEndpoint`, `RemoteDataSource`, `LocationRepository`; generic `NetworkService` and `DeepLinkService`
+- **Presentation**: `LocationListView`, `LocationListViewModel`, `LocationRow`, `AddLocationView`, `ErrorView`, generic `ViewState<Content>`
+- **DI**: `DependencyContainer` and `Dependencies` (protocol-typed); use `DependencyContainer.live` in the app and `DependencyContainer.test(fetchLocations:openWikipedia:)` in tests
+
+### Architecture & extension
+
+- **Network and deep link** are generic: `NetworkService.request<T: Decodable>(_ endpoint: EndpointProtocol)` and `DeepLinkService.open(_ url: URL)` are reused for any entity. New API entities use their own endpoint type (e.g. `FavoritesEndpoint`) and optionally their own data source; no need to edit existing ones.
+
+- **Adding a new domain entity** (e.g. Favorites): add a domain model and `RepositoriesProtocol`; add DTO and response type; add an endpoint type conforming to `EndpointProtocol` (see `LocationsEndpoint`); add a remote data source and repository implementation; add use case(s) and protocols; wire in `DependencyContainer`.
+
+- **Adding a new screen**: add ViewModel (depending on use case protocols), add views, register a factory on `Dependencies` (e.g. `makeFavoritesListViewModel()`), and wire navigation from the app or existing screens.
 
 ## Requirements
 

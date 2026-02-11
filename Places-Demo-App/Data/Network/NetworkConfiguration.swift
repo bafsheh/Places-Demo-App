@@ -32,10 +32,10 @@ struct NetworkConfiguration: Sendable {
         self.timeout = timeout
     }
 
-    /// Default configuration for the locations API (raw GitHub content).
+    /// Default configuration for the locations API. Base URL comes from AppConfiguration (Info.plist or environment).
     static var `default`: NetworkConfiguration {
         NetworkConfiguration(
-            baseURL: "https://raw.githubusercontent.com",
+            baseURL: AppConfiguration.apiBaseURL,
             headers: [
                 "Content-Type": "application/json",
                 "Accept": "application/json"

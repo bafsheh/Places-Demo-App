@@ -26,7 +26,7 @@ actor NetworkService: NetworkServiceProtocol {
 
     /// Performs a network request for the given endpoint and decodes the response.
     func request<T: Decodable>(_ endpoint: EndpointProtocol) async throws -> T {
-        let request = try endpoint.urlRequest(with: configuration)
+        let request = try await endpoint.urlRequest(with: configuration)
 
         let (data, response) = try await session.data(for: request)
 

@@ -25,45 +25,8 @@ final class RemoteDataSource: RemoteDataSourceProtocol {
 
     /// Fetches locations from the remote API and returns the raw DTO array.
     func fetchLocations() async throws -> [LocationDTO] {
-        let endpoint = Endpoint.locations
+        let endpoint = LocationsEndpoint.locations
         let response: LocationsResponse = try await networkService.request(endpoint)
         return response.locations
-    }
-}
-
-// MARK: - Endpoint
-
-private extension RemoteDataSource {
-    enum Endpoint {
-        case locations
-
-        var path: String {
-            switch self {
-            case .locations:
-                return "/abnamrocoesd/assignmentios/main/locations.json"
-            }
-        }
-
-        var method: HTTPMethod {
-            .get
-        }
-    }
-}
-
-extension RemoteDataSource.Endpoint: EndpointProtocol {
-    func urlRequest(with configuration: NetworkConfiguration) throws -> URLRequest {
-        guard let url = URL(string: configuration.baseURL + path) else {
-            throw NetworkError.invalidURL
-        }
-
-        var request = URLRequest(url: url)
-        request.httpMethod = method.rawValue
-        request.timeoutInterval = configuration.timeout
-
-        configuration.headers.forEach { key, value in
-            request.setValue(value, forHTTPHeaderField: key)
-        }
-
-        return request
     }
 }
