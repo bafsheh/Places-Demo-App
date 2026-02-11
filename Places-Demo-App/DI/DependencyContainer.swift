@@ -15,13 +15,17 @@ enum DependencyContainer {
     private static let locationRepository: LocationsRepositoryProtocol = LocationRepository(
         remoteDataSource: remoteDataSource
     )
-    private static let deepLinkService: WikipediaDeepLinkServiceProtocol = WikipediaDeepLinkService()
+    private static let urlOpener: URLOpening = DefaultURLOpener()
+    private static let deepLinkService: DeepLinkServiceProtocol = DeepLinkService(urlOpener: urlOpener)
+    private static let wikipediaDeepLinkService: WikipediaDeepLinkServiceProtocol = WikipediaDeepLinkService(
+        deepLinkService: deepLinkService
+    )
 
     static let fetchLocationsUseCase = FetchLocationsUseCase(
         repository: locationRepository
     )
     static let openWikipediaUseCase = OpenWikipediaUseCase(
-        deepLinkService: deepLinkService
+        deepLinkService: wikipediaDeepLinkService
     )
 
     static func makeLocationsListViewModel() -> LocationListViewModel {
