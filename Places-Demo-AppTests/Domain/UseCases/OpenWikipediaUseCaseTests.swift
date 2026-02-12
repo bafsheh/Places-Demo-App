@@ -6,7 +6,6 @@
 //  Dependencies: @testable Places_Demo_App, OpenWikipediaUseCase, WikipediaDeepLinkAdapter, MockWikipediaDeepLinkService, Location, OpenWikipediaError, DeepLinkError.
 //
 
-import CoreLocation
 import Testing
 @testable import Places_Demo_App
 

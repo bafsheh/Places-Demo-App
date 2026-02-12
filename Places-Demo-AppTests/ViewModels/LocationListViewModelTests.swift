@@ -6,7 +6,6 @@
 //  Dependencies: @testable Places_Demo_App, MockFetchLocationsUseCase, MockOpenWikipediaUseCase, ViewState, Location, NetworkError, OpenWikipediaError.
 //
 
-import CoreLocation
 import Testing
 @testable import Places_Demo_App
 

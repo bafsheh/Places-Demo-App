@@ -8,7 +8,6 @@
 //
 
 import Foundation
-import CoreLocation
 
 /// Builds Wikipedia Places deep link URLs (`wikipedia://places?lat=...&long=...&name=...`).
 ///

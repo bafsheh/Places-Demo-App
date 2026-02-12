@@ -3,8 +3,8 @@
 //  Places-Demo-App
 //
 //  Purpose: Single row in the locations list (name, coordinates, open-in-Wikipedia action).
-//  Dependencies: SwiftUI, Location, LocalizationHelper, Accessibility.
-//  Usage: Used in LocationListView's List.
+//  Dependencies: SwiftUI, Location (domain model with Coordinate), LocalizationHelper, Accessibility.
+//  Usage: Used in LocationListView's List. Uses location.formattedCoordinates (Coordinate has no UI dependency).
 //
 
 import SwiftUI

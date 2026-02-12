@@ -6,7 +6,6 @@
 //  Dependencies: @testable Places_Demo_App, Location.
 //
 
-import CoreLocation
 import Testing
 @testable import Places_Demo_App
 

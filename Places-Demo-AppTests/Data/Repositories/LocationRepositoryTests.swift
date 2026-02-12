@@ -6,7 +6,7 @@
 //  Dependencies: @testable Places_Demo_App, LocationRepository, MockRemoteDataSource, LocationDTO, Location, NetworkError.
 //
 
-import CoreLocation
+import Foundation
 import Testing
 @testable import Places_Demo_App
 

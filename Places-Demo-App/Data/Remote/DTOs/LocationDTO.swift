@@ -28,6 +28,7 @@ struct LocationDTO: Codable, Sendable {
 
     /// Maps this DTO to a domain `Location` (generates a new `id`).
     ///
+    /// Creates a `Location` with a domain `Coordinate` from `lat`/`long`; no CoreLocation types in Domain.
     /// - Returns: A `Location` with the same name and coordinates.
     func toDomain() -> Location {
         Location(

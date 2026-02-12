@@ -47,7 +47,7 @@ final class AddLocationViewModel {
 
     // MARK: - Public Methods
 
-    /// Validates lat/long; if valid, creates a `Location`, resumes the continuation with it, and clears it; otherwise sets `showError = true`.
+    /// Validates lat/long; if valid, creates a `Location` (with domain `Coordinate`), resumes the continuation with it, and clears it; otherwise sets `showError = true`.
     func submit() {
         guard let lat = Double(latitude),
               let lon = Double(longitude),
