@@ -11,8 +11,8 @@ iOS app demonstrating Wikipedia deep linking with Clean Architecture.
 
 ## Architecture
 
-- **Domain**: `Location` entity, `LocationsRepositoryProtocol`, use case protocols and implementations (`FetchLocationsUseCaseProtocol`, `OpenWikipediaUseCaseProtocol`)
-- **Data**: `LocationDTO`, `LocationsEndpoint`, `RemoteDataSource`, `LocationRepository`; generic `NetworkService` and `DeepLinkService`
+- **Domain**: `Location` entity, `LocationRepositoryProtocol`, use case protocols and implementations (`FetchLocationsUseCaseProtocol`, `OpenWikipediaUseCaseProtocol`)
+- **Data**: Remote API layer under `Data/Remote/` (DTOs, Endpoints, NetworkService, DataSource, AppConfiguration); `Data/Repositories/` and `Data/DeepLink/` at Data level. `LocationRepository` implements `LocationRepositoryProtocol`; generic `NetworkService` and `DeepLinkService` for reuse.
 - **Presentation**: `LocationListView`, `LocationListViewModel`, `LocationRow`, `AddLocationView`, `ErrorView`, generic `ViewState<Content>`
 - **DI**: `DependencyContainer` and `Dependencies` (protocol-typed); use `DependencyContainer.live` in the app and `DependencyContainer.test(fetchLocations:openWikipedia:)` in tests
 
@@ -20,7 +20,7 @@ iOS app demonstrating Wikipedia deep linking with Clean Architecture.
 
 - **Network and deep link** are generic: `NetworkService.request<T: Decodable>(_ endpoint: EndpointProtocol)` and `DeepLinkService.open(_ url: URL)` are reused for any entity. New API entities use their own endpoint type (e.g. `FavoritesEndpoint`) and optionally their own data source; no need to edit existing ones.
 
-- **Adding a new domain entity** (e.g. Favorites): add a domain model and `RepositoriesProtocol`; add DTO and response type; add an endpoint type conforming to `EndpointProtocol` (see `LocationsEndpoint`); add a remote data source and repository implementation; add use case(s) and protocols; wire in `DependencyContainer`.
+- **Adding a new domain entity** (e.g. Favorites): add a domain model and repository protocol; add DTO and response type under `Data/Remote/`; add an endpoint type conforming to `EndpointProtocol` (see `LocationsEndpoint` in `Data/Remote/Endpoints/`); add a remote data source and repository implementation; add use case(s) and protocols; wire in `DependencyContainer`. The unit test target mirrors this structure (e.g. `Places-Demo-AppTests/Data/Remote/`, `Domain/UseCases/`) so mocks live alongside the code they double.
 
 - **Adding a new screen**: add ViewModel (depending on use case protocols), add views, register a factory on `Dependencies` (e.g. `makeFavoritesListViewModel()`), and wire navigation from the app or existing screens.
 

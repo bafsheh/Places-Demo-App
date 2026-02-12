@@ -57,7 +57,7 @@ enum DependencyContainer {
 
     // MARK: - Domain (use cases)
 
-    private static let locationRepository: LocationsRepositoryProtocol = LocationRepository(
+    private static let locationRepository: LocationRepositoryProtocol = LocationRepository(
         remoteDataSource: remoteDataSource
     )
     private static let urlOpener: URLOpening = DefaultURLOpener()

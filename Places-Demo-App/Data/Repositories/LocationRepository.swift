@@ -1,7 +1,7 @@
 import Foundation
 
-/// Implementation of LocationsRepositoryProtocol
-final class LocationRepository: LocationsRepositoryProtocol {
+/// Implementation of LocationRepositoryProtocol
+final class LocationRepository: LocationRepositoryProtocol {
 
     private let remoteDataSource: RemoteDataSourceProtocol
 

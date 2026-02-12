@@ -1,7 +1,7 @@
 import Foundation
 
 /// Protocol defining the contract for locations data access
-protocol LocationsRepositoryProtocol: Sendable {
+protocol LocationRepositoryProtocol: Sendable {
 
     /// Fetches locations from the remote source
     /// - Returns: Array of Location entities

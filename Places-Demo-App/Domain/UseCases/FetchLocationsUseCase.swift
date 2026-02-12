@@ -9,9 +9,9 @@ protocol FetchLocationsUseCaseProtocol: Sendable {
 /// Use case responsible for fetching locations.
 final class FetchLocationsUseCase: FetchLocationsUseCaseProtocol {
 
-    private let repository: LocationsRepositoryProtocol
+    private let repository: LocationRepositoryProtocol
 
-    init(repository: LocationsRepositoryProtocol) {
+    init(repository: LocationRepositoryProtocol) {
         self.repository = repository
     }
 
