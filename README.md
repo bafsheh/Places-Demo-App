@@ -18,7 +18,7 @@ iOS app demonstrating Wikipedia deep linking with Clean Architecture.
 
 ### Architecture & extension
 
-- **Network and deep link** are generic: `NetworkService.request<T: Decodable>(_ endpoint: EndpointProtocol)` and `DeepLinkService.open(_ url: URL)` are reused for any entity. New API entities use their own endpoint type (e.g. `FavoritesEndpoint`) and optionally their own data source; no need to edit existing ones.
+- **Network and deep link** are generic: `NetworkService.request<T: Decodable & Sendable>(_ endpoint: EndpointProtocol)` and `DeepLinkService.open(_ url: URL)` are reused for any entity. New API entities use their own endpoint type (e.g. `FavoritesEndpoint`) and optionally their own data source; no need to edit existing ones.
 
 - **Adding a new domain entity** (e.g. Favorites): add a domain model and repository protocol; add DTO and response type under `Data/Remote/`; add an endpoint type conforming to `EndpointProtocol` (see `LocationsEndpoint` in `Data/Remote/Endpoints/`); add a remote data source and repository implementation; add use case(s) and protocols; wire in `DependencyContainer`. The unit test target mirrors this structure (e.g. `Places-Demo-AppTests/Data/Remote/`, `Domain/UseCases/`) so mocks live alongside the code they double.
 
@@ -29,6 +29,10 @@ iOS app demonstrating Wikipedia deep linking with Clean Architecture.
 - Xcode 15+
 - iOS 17+
 - Wikipedia app (for deep link; optional)
+
+## Swift 6 & Concurrency
+
+The app is built with **Swift 6** and **Strict Concurrency Checking** (complete). It uses async/await throughout the data and domain layers, an actor for `NetworkService`, and `@MainActor` for UI and view models. The add-location sheet uses a continuation-based flow (no `@escaping` callbacks). To validate for data races, enable **Thread Sanitizer** in the Run scheme (Edit Scheme → Run → Diagnostics → Thread Sanitizer).
 
 ## Build & Run
 

@@ -2,11 +2,14 @@
 //  MockNetworkService.swift
 //  Places-Demo-AppTests
 //
+//  Purpose: Test double for NetworkServiceProtocol; returns configured LocationsResponse or throws.
+//  Usage: Use in unit tests (e.g. RemoteDataSource) to avoid real HTTP.
+//
 
 import Foundation
 @testable import Places_Demo_App
 
-/// Mock of `NetworkServiceProtocol` for unit tests. Configure success response or error to throw.
+/// Mock for unit testing; conforms to `NetworkServiceProtocol`. Set `locationsResponse` or `errorToThrow`; only decodes to `LocationsResponse`.
 final class MockNetworkService: NetworkServiceProtocol, @unchecked Sendable {
 
     var locationsResponse: LocationsResponse?
@@ -17,7 +20,7 @@ final class MockNetworkService: NetworkServiceProtocol, @unchecked Sendable {
         self.errorToThrow = errorToThrow
     }
 
-    func request<T: Decodable>(_ endpoint: EndpointProtocol) async throws -> T {
+    func request<T: Decodable & Sendable>(_ endpoint: EndpointProtocol) async throws -> T {
         if let errorToThrow {
             throw errorToThrow
         }

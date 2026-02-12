@@ -1,10 +1,27 @@
+//
+//  DeepLinkService.swift
+//  Places-Demo-App
+//
+//  Purpose: Generic deep link handling (open URL via injectable opener); errors and URL opener protocol.
+//  Dependencies: UIKit (UIApplication for DefaultURLOpener).
+//  Usage: DeepLinkService used by WikipediaDeepLinkService; URLOpening injected for tests.
+//
+
 import Foundation
 import UIKit
 
 /// Errors that can occur when opening a deep link.
+///
+/// - SeeAlso: `DeepLinkService`, `WikipediaDeepLinkService`
 enum DeepLinkError: LocalizedError, Sendable {
+
+    /// URL could not be constructed (e.g. invalid components).
     case urlCreationFailed
+
+    /// System could not open the URL (generic failure).
     case cannotOpenURL
+
+    /// Target app (e.g. Wikipedia) is not installed; associated value is the app name if known.
     case appNotInstalled(appName: String?)
 
     var errorDescription: String? {
@@ -19,42 +36,69 @@ enum DeepLinkError: LocalizedError, Sendable {
     }
 }
 
-/// Protocol for opening URLs. Allows injection of a mock in tests.
+/// Protocol for opening URLs in the system (e.g. another app or browser); allows injection of a mock in tests.
+///
+/// - SeeAlso: `DefaultURLOpener`, `DeepLinkService`
 protocol URLOpening: Sendable {
 
-    /// Attempts to open the given URL.
-    /// - Returns: `true` if the URL was opened, `false` otherwise.
+    /// Attempts to open the given URL (e.g. via `UIApplication.shared.open`).
+    ///
+    /// - Parameter url: The URL to open.
+    /// - Returns: `true` if the URL was opened, `false` otherwise (e.g. app not installed).
     func open(_ url: URL) async -> Bool
 }
 
 /// Default implementation that uses `UIApplication.shared` to open URLs.
+///
+/// - Important: Must be used from the main actor; conforms to `URLOpening` for production. Tests inject a mock.
+/// - SeeAlso: `URLOpening`, `DeepLinkService`
 @MainActor
 final class DefaultURLOpener: URLOpening {
 
+    /// Opens the URL via `UIApplication.shared.open(url)`.
+    ///
+    /// - Parameter url: The URL to open.
+    /// - Returns: Result of the system open call.
     func open(_ url: URL) async -> Bool {
         await UIApplication.shared.open(url)
     }
 }
 
-/// Protocol for a generic deep link service that can open any URL.
+/// Contract for a generic deep link service that can open any URL.
+///
+/// Used by Wikipedia-specific code to open `wikipedia://places?...`; other deep link types could use the same protocol.
+///
+/// - SeeAlso: `DeepLinkService`, `WikipediaDeepLinkService`
 protocol DeepLinkServiceProtocol: Sendable {
 
-    /// Opens the given URL. Can be used for any deep link (Wikipedia, maps, etc.).
+    /// Opens the given URL (e.g. Wikipedia Places, maps).
+    ///
     /// - Parameter url: The URL to open.
-    /// - Throws: `DeepLinkError.appNotInstalled` if the URL could not be opened.
+    /// - Throws: `DeepLinkError.appNotInstalled` when the URL could not be opened (e.g. app not installed).
     func open(_ url: URL) async throws
 }
 
 /// Generic deep link service that opens URLs via an injectable opener.
+///
+/// Converts opener result to throws: if opener returns `false`, throws `DeepLinkError.appNotInstalled`. Used by `WikipediaDeepLinkService`.
+///
+/// - SeeAlso: `URLOpening`, `WikipediaDeepLinkService`, `DeepLinkError`
 @MainActor
 final class DeepLinkService: DeepLinkServiceProtocol {
 
     private let urlOpener: URLOpening
 
+    /// Creates the service with the given URL opener (e.g. `DefaultURLOpener` or a test mock).
+    ///
+    /// - Parameter urlOpener: Implementation that performs the system open.
     init(urlOpener: URLOpening) {
         self.urlOpener = urlOpener
     }
 
+    /// Opens the URL via the injectable opener; throws if opening failed.
+    ///
+    /// - Parameter url: The URL to open.
+    /// - Throws: `DeepLinkError.appNotInstalled(appName: nil)` when the opener returns `false`.
     func open(_ url: URL) async throws {
         let opened = await urlOpener.open(url)
         guard opened else {

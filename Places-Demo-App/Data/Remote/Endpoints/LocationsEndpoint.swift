@@ -1,12 +1,25 @@
+//
+//  LocationsEndpoint.swift
+//  Places-Demo-App
+//
+//  Purpose: Defines the locations API endpoint (path, method, URLRequest builder).
+//  Dependencies: EndpointProtocol, NetworkConfiguration, NetworkError.
+//  Usage: Used by RemoteDataSource when calling NetworkService.request.
+//
+
 import Foundation
 
-/// Endpoint for the locations API. Extracted so new entities can add their own endpoint types
-/// without editing this file. To add a new remote entity: add a new DTO, response type,
-/// endpoint type (e.g. FavoritesEndpoint), and a dedicated data source that uses it.
+/// Endpoint for the locations API.
+///
+/// Defines path, method, and URLRequest builder for the single locations resource. To add more remote entities, introduce a new DTO, response type, and endpoint (e.g. FavoritesEndpoint).
+///
+/// - SeeAlso: `EndpointProtocol`, `LocationsResponse`, `RemoteDataSource`
 enum LocationsEndpoint: EndpointProtocol, Sendable {
 
+    /// The locations list endpoint (e.g. JSON list of places).
     case locations
 
+    /// Path segment appended to the configuration base URL.
     var path: String {
         switch self {
         case .locations:
@@ -14,10 +27,16 @@ enum LocationsEndpoint: EndpointProtocol, Sendable {
         }
     }
 
+    /// HTTP method for this endpoint (GET).
     var method: HTTPMethod {
         .get
     }
 
+    /// Builds a URLRequest for this endpoint using the given configuration.
+    ///
+    /// - Parameter configuration: Base URL, headers, and timeout.
+    /// - Returns: Configured URLRequest.
+    /// - Throws: `NetworkError.invalidURL` if base URL + path is invalid.
     func urlRequest(with configuration: NetworkConfiguration) throws -> URLRequest {
         guard let url = URL(string: configuration.baseURL + path) else {
             throw NetworkError.invalidURL

@@ -1,10 +1,25 @@
+//
+//  LocationRepositoryProtocol.swift
+//  Places-Demo-App
+//
+//  Purpose: Contract for fetching locations from a data source (remote or test double).
+//  Dependencies: None.
+//  Usage: Injected into FetchLocationsUseCase; implemented by LocationRepository.
+//
+
 import Foundation
 
-/// Protocol defining the contract for locations data access
+/// Contract for fetching locations from a data source (remote API or test double).
+///
+/// Implementations are responsible for loading location data and mapping to domain `Location` entities.
+/// Injected into `FetchLocationsUseCase` so tests can use a mock repository.
+///
+/// - SeeAlso: `LocationRepository`, `FetchLocationsUseCase`, `Location`
 protocol LocationRepositoryProtocol: Sendable {
 
-    /// Fetches locations from the remote source
-    /// - Returns: Array of Location entities
-    /// - Throws: NetworkError if the fetch fails
+    /// Fetches all locations from the underlying source.
+    ///
+    /// - Returns: Array of domain `Location` entities.
+    /// - Throws: Errors from the data layer (e.g. `NetworkError`) when the fetch fails.
     func fetchLocations() async throws -> [Location]
 }

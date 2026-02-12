@@ -1,10 +1,25 @@
+//
+//  LocationRow.swift
+//  Places-Demo-App
+//
+//  Purpose: Single row in the locations list (name, coordinates, open-in-Wikipedia action).
+//  Dependencies: SwiftUI, Location, LocalizationHelper, Accessibility.
+//  Usage: Used in LocationListView's List.
+//
+
 import SwiftUI
 
-/// Row component for displaying a single location
+/// Row component for displaying a single location in the list (name, coordinates, chevron).
+///
+/// Tapping the row is handled by the parent (e.g. open in Wikipedia). Uses `AccessibilityID.locationRow(id:)` for UI tests.
+///
+/// - SeeAlso: `LocationListView`, `Location`, `AccessibilityID`
 struct LocationRow: View {
 
+    /// The location to display (name, coordinates).
     let location: Location
 
+    /// HStack with icon, name/coordinates, and chevron; accessibility combined and hint for Wikipedia.
     var body: some View {
         HStack(spacing: 16) {
             iconView
@@ -32,6 +47,9 @@ struct LocationRow: View {
         .accessibilityIdentifier(AccessibilityID.locationRow(id: location.id.uuidString))
     }
 
+    // MARK: - Private
+
+    /// Map pin icon in a circular gradient background; hidden from accessibility (label on row).
     private var iconView: some View {
         ZStack {
             Circle()

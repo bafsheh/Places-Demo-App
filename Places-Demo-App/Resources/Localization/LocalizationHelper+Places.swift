@@ -1,5 +1,15 @@
+//
+//  LocalizationHelper+Places.swift
+//  Places-Demo-App
+//
+//  Purpose: Localized strings for the places/list screen.
+//  Dependencies: LocalizationHelper, String Catalog.
+//  Usage: LocalizationHelper.Places.title, .add, .loadingLocations.
+//
+
 import Foundation
 
+/// Localized strings for the places/list screen (title, add button, loading message).
 extension LocalizationHelper {
 
     enum Places {

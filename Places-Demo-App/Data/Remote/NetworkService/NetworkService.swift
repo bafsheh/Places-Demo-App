@@ -1,7 +1,19 @@
+//
+//  NetworkService.swift
+//  Places-Demo-App
+//
+//  Purpose: Performs HTTP requests and decodes JSON; actor for concurrency safety.
+//  Dependencies: URLSession, NetworkConfiguration, EndpointProtocol, NetworkError.
+//  Usage: Injected into RemoteDataSource; used only in DependencyContainer.
+//
+
 import Foundation
 
 /// Actor that performs HTTP requests and decodes JSON responses.
-/// Isolates network I/O and is safe to use from concurrent contexts.
+///
+/// Isolates network I/O so it is safe to use from concurrent contexts. Validates HTTP status (2xx) and maps failures to `NetworkError`.
+///
+/// - SeeAlso: `NetworkServiceProtocol`, `EndpointProtocol`, `NetworkError`, `RemoteDataSource`
 actor NetworkService: NetworkServiceProtocol {
 
     private let session: URLSession
@@ -9,6 +21,11 @@ actor NetworkService: NetworkServiceProtocol {
     private let decoder: JSONDecoder
 
     /// Creates a network service with optional custom session and decoder.
+    ///
+    /// - Parameters:
+    ///   - session: URLSession for performing requests; defaults to `.shared`.
+    ///   - configuration: Base URL, headers, and timeout used when building requests.
+    ///   - decoder: JSON decoder for response bodies; defaults to `JSONDecoder()`.
     init(
         session: URLSession = .shared,
         configuration: NetworkConfiguration,
@@ -19,8 +36,12 @@ actor NetworkService: NetworkServiceProtocol {
         self.decoder = decoder
     }
 
-    /// Performs a network request for the given endpoint and decodes the response.
-    func request<T: Decodable>(_ endpoint: EndpointProtocol) async throws -> T {
+    /// Performs a network request for the given endpoint and decodes the response to type `T`.
+    ///
+    /// - Parameter endpoint: Endpoint that provides path, method, and URLRequest.
+    /// - Returns: Decoded value of type `T`.
+    /// - Throws: `NetworkError` for non-HTTP response, non-2xx status, or decoding failure.
+    func request<T: Decodable & Sendable>(_ endpoint: EndpointProtocol) async throws -> T {
         let request = try await endpoint.urlRequest(with: configuration)
 
         let (data, response) = try await session.data(for: request)

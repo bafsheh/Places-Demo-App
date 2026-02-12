@@ -1,5 +1,15 @@
+//
+//  LocalizationHelper+AddLocation.swift
+//  Places-Demo-App
+//
+//  Purpose: Localized strings for the add-location sheet.
+//  Dependencies: LocalizationHelper, String Catalog.
+//  Usage: LocalizationHelper.AddLocation.title, .namePlaceholder, .cancel, etc.
+//
+
 import Foundation
 
+/// Localized strings for the add-location sheet (title, section headers, placeholders, buttons, alert).
 extension LocalizationHelper {
 
     enum AddLocation {

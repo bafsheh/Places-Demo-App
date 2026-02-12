@@ -1,12 +1,34 @@
+//
+//  LocationDTO.swift
+//  Places-Demo-App
+//
+//  Purpose: API response shapes for locations; maps to domain Location.
+//  Dependencies: None.
+//  Usage: Used by RemoteDataSource and LocationsEndpoint response decoding.
+//
+
 import Foundation
 
-/// Data Transfer Object for Location from API
+/// Data transfer object for a single location as returned by the locations API.
+///
+/// Property names match the API (e.g. `lat`/`long`); use `toDomain()` to obtain a domain `Location` with a new UUID.
+/// Explicit nonisolated Codable for Swift 6 strict concurrency when used as actor return type.
+///
+/// - SeeAlso: `Location`, `LocationsResponse`, `RemoteDataSource`
 struct LocationDTO: Codable, Sendable {
+
+    /// Optional display name from the API.
     let name: String?
+
+    /// Latitude in degrees.
     let lat: Double
+
+    /// Longitude in degrees.
     let long: Double
 
-    /// Maps DTO to Domain Entity
+    /// Maps this DTO to a domain `Location` (generates a new `id`).
+    ///
+    /// - Returns: A `Location` with the same name and coordinates.
     func toDomain() -> Location {
         Location(
             name: name,
@@ -14,9 +36,46 @@ struct LocationDTO: Codable, Sendable {
             longitude: long
         )
     }
+
+    nonisolated init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        name = try container.decodeIfPresent(String.self, forKey: .name)
+        lat = try container.decode(Double.self, forKey: .lat)
+        long = try container.decode(Double.self, forKey: .long)
+    }
+
+    nonisolated func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encodeIfPresent(name, forKey: .name)
+        try container.encode(lat, forKey: .lat)
+        try container.encode(long, forKey: .long)
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case name, lat, long
+    }
 }
 
-/// Response wrapper for locations API
+/// Top-level response shape for the locations API; contains an array of location DTOs.
+/// Explicit nonisolated Codable for Swift 6 strict concurrency when used as actor return type.
+///
+/// - SeeAlso: `LocationDTO`, `LocationsEndpoint`, `RemoteDataSource`
 struct LocationsResponse: Codable, Sendable {
+
+    /// Array of location DTOs from the API.
     let locations: [LocationDTO]
+
+    nonisolated init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        locations = try container.decode([LocationDTO].self, forKey: .locations)
+    }
+
+    nonisolated func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(locations, forKey: .locations)
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case locations
+    }
 }

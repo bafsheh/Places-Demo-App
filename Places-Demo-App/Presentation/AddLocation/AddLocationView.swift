@@ -1,15 +1,38 @@
+//
+//  AddLocationView.swift
+//  Places-Demo-App
+//
+//  Purpose: Sheet for adding a custom location (name, lat/long); submits or cancels via ViewModel.
+//  Dependencies: SwiftUI, AddLocationViewModel, LocalizationHelper, Accessibility.
+//  Usage: Presented as sheet from LocationListView when user taps add; created with dependencies.makeAddLocationViewModel.
+//
+
 import SwiftUI
 
-/// Sheet for entering custom location coordinates
+/// Sheet for entering a custom location (name, latitude, longitude); submit validates and completes the continuation, cancel dismisses.
+///
+/// Uses a form with name and coordinate fields; shows an alert when validation fails. On valid submit, the view model resumes its continuation with the `Location` and the parent dismisses. On cancel or swipe-dismiss, the view model resumes with `nil`.
+///
+/// - SeeAlso: `AddLocationViewModel`, `LocationListView`, `AppDependenciesProtocol`
 struct AddLocationView: View {
+
+    // MARK: - Properties
 
     @Environment(\.dismiss) private var dismiss
     @Bindable var viewModel: AddLocationViewModel
 
+    // MARK: - Lifecycle
+
+    /// Creates the view with the given view model (form state and submit callback).
+    ///
+    /// - Parameter viewModel: Binds form fields and performs validation on submit.
     init(viewModel: AddLocationViewModel) {
         self.viewModel = viewModel
     }
 
+    // MARK: - Body
+
+    /// NavigationStack with form (name, lat/long), toolbar cancel/add, and invalid-input alert; medium detent.
     var body: some View {
         NavigationStack {
             Form {
@@ -48,6 +71,7 @@ struct AddLocationView: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button(LocalizationHelper.AddLocation.cancel) {
+                        viewModel.cancel()
                         dismiss()
                     }
                     .accessibilityHint(Accessibility.AddLocation.cancelButtonHint)
@@ -56,7 +80,6 @@ struct AddLocationView: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button(LocalizationHelper.AddLocation.add) {
                         viewModel.submit()
-                        
                         if viewModel.showError == false {
                             dismiss()
                         }
@@ -75,5 +98,8 @@ struct AddLocationView: View {
         }
         .presentationDetents([.medium])
         .presentationDragIndicator(.visible)
+        .onDisappear {
+            viewModel.cancel()
+        }
     }
 }

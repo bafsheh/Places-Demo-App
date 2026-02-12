@@ -2,11 +2,14 @@
 //  MockDeepLinkService.swift
 //  Places-Demo-AppTests
 //
+//  Purpose: Test double for DeepLinkServiceProtocol; records opened URLs and can throw or succeed.
+//  Usage: Use in unit tests (e.g. WikipediaDeepLinkService) to avoid opening real URLs.
+//
 
 import Foundation
 @testable import Places_Demo_App
 
-/// Mock DeepLinkService for tests. Records opened URLs and can throw or succeed.
+/// Mock for unit testing; conforms to `DeepLinkServiceProtocol`. Set `openedURLs` to inspect calls; `errorToThrow` to simulate failure.
 final class MockDeepLinkService: DeepLinkServiceProtocol, @unchecked Sendable {
 
     var openedURLs: [URL] = []

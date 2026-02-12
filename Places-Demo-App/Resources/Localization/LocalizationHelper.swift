@@ -1,9 +1,22 @@
+//
+//  LocalizationHelper.swift
+//  Places-Demo-App
+//
+//  Purpose: Central namespace for localized strings; use String Catalog (Localizable.xcstrings) for translations.
+//  Dependencies: Foundation (String(localized:)).
+//  Usage: LocalizationHelper.Common.xxx, LocalizationHelper.Places.xxx (see extensions).
+//
+
 import Foundation
 
-/// Central helper for all localized copy. Use the String Catalog (Localizable.xcstrings) for translations.
-/// Structure is grouped by screen/domain for discoverability and scalability.
+/// Central namespace for all localized copy; uses the String Catalog (Localizable.xcstrings) for translations.
+///
+/// Structure is grouped by screen/domain (Common, Places, AddLocation, Location, Accessibility) for discoverability and scalability. Extensions add nested enums (e.g. `LocalizationHelper.Places`).
+///
+/// - SeeAlso: `LocalizationHelper+Places`, `LocalizationHelper+AddLocation`, `LocalizationHelper+Accessibility`
 enum LocalizationHelper {
 
+    /// Strings shared across screens (loading, error, retry, accessibility hints).
     enum Common {
         static var loading: String { String(localized: "common.loading") }
         static var error: String { String(localized: "common.error") }
