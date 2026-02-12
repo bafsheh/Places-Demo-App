@@ -16,17 +16,7 @@ final class AddLocationViewModel {
     init(onSubmit: @escaping (Location) -> Void) {
         self.onSubmit = onSubmit
     }
-
-    var isValid: Bool {
-        guard let lat = Double(latitude),
-              let lon = Double(longitude),
-              lat >= -90, lat <= 90,
-              lon >= -180, lon <= 180 else {
-            return false
-        }
-        return true
-    }
-
+    
     func submit() {
         guard let lat = Double(latitude),
               let lon = Double(longitude),
@@ -35,8 +25,9 @@ final class AddLocationViewModel {
             showError = true
             return
         }
+        let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
         let location = Location(
-            name: name.isEmpty ? nil : name,
+            name: trimmedName.isEmpty ? nil : trimmedName,
             latitude: lat,
             longitude: lon
         )

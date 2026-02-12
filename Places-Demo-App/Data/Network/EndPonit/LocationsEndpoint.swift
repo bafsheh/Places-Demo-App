@@ -1,8 +1,3 @@
-//
-//  LocationsEndpoint.swift
-//  Places-Demo-App
-//
-
 import Foundation
 
 /// Endpoint for the locations API. Extracted so new entities can add their own endpoint types

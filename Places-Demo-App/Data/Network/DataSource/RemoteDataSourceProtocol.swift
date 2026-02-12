@@ -1,8 +1,3 @@
-//
-//  RemoteDataSourceProtocol.swift
-//  Places-Demo-App
-//
-
 import Foundation
 
 /// Protocol for remote data fetching. Implementations typically call a network service and map DTOs.

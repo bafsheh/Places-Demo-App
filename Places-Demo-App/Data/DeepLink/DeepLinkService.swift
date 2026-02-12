@@ -1,8 +1,3 @@
-//
-//  DeepLinkService.swift
-//  Places-Demo-App
-//
-
 import Foundation
 import UIKit
 

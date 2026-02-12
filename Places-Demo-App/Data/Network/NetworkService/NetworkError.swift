@@ -1,8 +1,3 @@
-//
-//  NetworkError.swift
-//  Places-Demo-App
-//
-
 import Foundation
 
 /// Errors that can occur during network operations.

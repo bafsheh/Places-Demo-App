@@ -1,8 +1,3 @@
-//
-//  NetworkServiceProtocol.swift
-//  Places-Demo-App
-//
-
 import Foundation
 
 /// HTTP methods supported by the network service.

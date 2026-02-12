@@ -1,8 +1,3 @@
-//
-//  NetworkConfiguration.swift
-//  Places-Demo-App
-//
-
 import Foundation
 
 /// Configuration for network requests: base URL, headers, and timeout.

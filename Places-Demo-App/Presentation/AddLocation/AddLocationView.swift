@@ -40,11 +40,13 @@ struct AddLocationView: View {
                     }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Open") {
+                    Button("Add") {
                         viewModel.submit()
-                        dismiss()
+                        
+                        if viewModel.showError == false {
+                            dismiss()
+                        }
                     }
-                    .disabled(!viewModel.isValid)
                 }
             }
             .alert("Invalid coordinates", isPresented: $viewModel.showError) {

@@ -141,8 +141,9 @@
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				en,
 				Base,
+				en,
+				nl,
 			);
 			mainGroup = EFA236012F3B397500013193;
 			minimizedProjectReferenceProxies = 1;

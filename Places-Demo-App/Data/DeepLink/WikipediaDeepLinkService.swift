@@ -1,8 +1,3 @@
-//
-//  WikipediaDeepLinkService.swift
-//  Places-Demo-App
-//
-
 import Foundation
 import CoreLocation
 

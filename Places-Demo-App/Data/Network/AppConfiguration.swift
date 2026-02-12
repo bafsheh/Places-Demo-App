@@ -1,8 +1,3 @@
-//
-//  AppConfiguration.swift
-//  Places-Demo-App
-//
-
 import Foundation
 
 /// App-wide configuration read from Info.plist or environment. Allows staging/production

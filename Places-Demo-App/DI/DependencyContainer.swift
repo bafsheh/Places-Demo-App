@@ -1,23 +1,50 @@
 import Foundation
+import SwiftUI
 import UIKit
 
-/// Holds protocol-typed dependencies so screens and tests can use the same resolution API.
-/// Use `DependencyContainer.live` in the app and `DependencyContainer.test(fetchLocations:openWikipedia:)` in tests.
-struct Dependencies: Sendable {
+// All app dependency resolution goes through DependencyContainer.live in production;
+// tests use a Dependencies instance built in the test target (e.g. TestDependencies.make()).
 
-    let fetchLocationsUseCase: FetchLocationsUseCaseProtocol
-    let openWikipediaUseCase: OpenWikipediaUseCaseProtocol
+/// Protocol for app dependency injection. MainActor-isolated so view factories run on the main actor (Swift 6).
+@MainActor
+protocol AppDependenciesProtocol {
 
+    func makeRootView(router: Router<PlacesRoute>) -> LocationListView
+    func makeLocationsListViewModel() -> LocationListViewModel
+    func makeAddLocationViewModel(onSubmit: @escaping (Location) -> Void) -> AddLocationViewModel
+}
+
+/// Holds protocol-typed dependencies. Conforms to AppDependenciesProtocol for injection into views.
+struct Dependencies: Sendable, AppDependenciesProtocol {
+
+    let fetchLocationsUseCase: any FetchLocationsUseCaseProtocol
+    let openWikipediaUseCase: any OpenWikipediaUseCaseProtocol
+
+    @MainActor
     func makeLocationsListViewModel() -> LocationListViewModel {
         LocationListViewModel(
             fetchLocationsUseCase: fetchLocationsUseCase,
             openWikipediaUseCase: openWikipediaUseCase
         )
     }
+
+    @MainActor
+    func makeRootView(router: Router<PlacesRoute>) -> LocationListView {
+        LocationListView(router: router, viewModel: makeLocationsListViewModel(), dependencies: self)
+    }
+
+    @MainActor
+    func makeAddLocationViewModel(onSubmit: @escaping (Location) -> Void) -> AddLocationViewModel {
+        AddLocationViewModel(onSubmit: onSubmit)
+    }
 }
+
+// MARK: - Container
 
 @MainActor
 enum DependencyContainer {
+
+    // MARK: - Network
 
     private static let networkConfiguration = NetworkConfiguration.default
     private static let networkService: NetworkServiceProtocol = NetworkService(
@@ -27,6 +54,9 @@ enum DependencyContainer {
         networkService: networkService,
         configuration: networkConfiguration
     )
+
+    // MARK: - Domain (use cases)
+
     private static let locationRepository: LocationsRepositoryProtocol = LocationRepository(
         remoteDataSource: remoteDataSource
     )
@@ -35,7 +65,6 @@ enum DependencyContainer {
     private static let wikipediaDeepLinkService: WikipediaDeepLinkServiceProtocol = WikipediaDeepLinkService(
         deepLinkService: deepLinkService
     )
-
     private static let fetchLocationsUseCase: FetchLocationsUseCaseProtocol = FetchLocationsUseCase(
         repository: locationRepository
     )
@@ -43,25 +72,11 @@ enum DependencyContainer {
         deepLinkService: wikipediaDeepLinkService
     )
 
-    /// Live dependencies (production implementations). Use in the app entry point.
+    // MARK: - Presentation (Dependencies)
+
+    /// Live dependencies (production). Use in the app entry point; tests use a Dependencies built in the test target (e.g. TestDependencies.make()).
     static let live = Dependencies(
         fetchLocationsUseCase: fetchLocationsUseCase,
         openWikipediaUseCase: openWikipediaUseCase
     )
-
-    /// Test dependencies with injected use cases. Use in unit tests to provide mocks.
-    static func test(
-        fetchLocations: FetchLocationsUseCaseProtocol,
-        openWikipedia: OpenWikipediaUseCaseProtocol
-    ) -> Dependencies {
-        Dependencies(
-            fetchLocationsUseCase: fetchLocations,
-            openWikipediaUseCase: openWikipedia
-        )
-    }
-
-    /// Builds the locations list ViewModel using live dependencies. Prefer `DependencyContainer.live.makeLocationsListViewModel()` for new code.
-    static func makeLocationsListViewModel() -> LocationListViewModel {
-        live.makeLocationsListViewModel()
-    }
 }

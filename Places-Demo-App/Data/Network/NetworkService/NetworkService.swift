@@ -1,8 +1,3 @@
-//
-//  NetworkService.swift
-//  Places-Demo-App
-//
-
 import Foundation
 
 /// Actor that performs HTTP requests and decodes JSON responses.

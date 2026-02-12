@@ -1,8 +1,3 @@
-//
-//  RemoteDataSource.swift
-//  Places-Demo-App
-//
-
 import Foundation
 
 /// Remote data source that fetches locations via the network service and returns DTOs.

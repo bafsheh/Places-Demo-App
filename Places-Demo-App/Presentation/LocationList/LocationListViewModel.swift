@@ -6,7 +6,7 @@ import Observation
 final class LocationListViewModel {
 
     private(set) var state: ViewState<[Location]> = .idle
-    var isCustomLocationSheetPresented = false
+    private(set) var addedLocations: [Location] = []
 
     private let fetchLocationsUseCase: FetchLocationsUseCaseProtocol
     private let openWikipediaUseCase: OpenWikipediaUseCaseProtocol
@@ -30,19 +30,15 @@ final class LocationListViewModel {
         }
     }
 
+    func addLocation(_ location: Location) {
+        addedLocations.append(location)
+    }
+
     func openLocation(_ location: Location) async {
         do {
             try await openWikipediaUseCase.execute(location: location)
         } catch {
             state = .error(error.localizedDescription)
         }
-    }
-
-    func showCustomLocationSheet() {
-        isCustomLocationSheetPresented = true
-    }
-
-    func hideCustomLocationSheet() {
-        isCustomLocationSheetPresented = false
     }
 }
