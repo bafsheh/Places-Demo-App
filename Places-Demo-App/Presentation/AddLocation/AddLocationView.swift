@@ -38,6 +38,7 @@ struct AddLocationView: View {
                     Button(LocalizedStrings.AddLocation.cancel) {
                         dismiss()
                     }
+                    .accessibilityHint(LocalizedStrings.Accessibility.AddLocation.cancelButtonHint)
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button(LocalizedStrings.AddLocation.add) {
@@ -47,6 +48,7 @@ struct AddLocationView: View {
                             dismiss()
                         }
                     }
+                    .accessibilityHint(LocalizedStrings.Accessibility.AddLocation.addButtonHint)
                 }
             }
             .alert(LocalizedStrings.AddLocation.alertInvalidTitle, isPresented: $viewModel.showError) {
@@ -59,5 +61,11 @@ struct AddLocationView: View {
         }
         .presentationDetents([.medium])
         .presentationDragIndicator(.visible)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(LocalizedStrings.Accessibility.AddLocation.formLabel)
     }
+}
+
+#Preview {
+    AddLocationView(viewModel: AddLocationViewModel(onSubmit: { _ in }))
 }

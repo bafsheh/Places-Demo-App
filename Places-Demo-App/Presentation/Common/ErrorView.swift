@@ -19,3 +19,7 @@ struct ErrorView: View {
         .accessibilityHint(LocalizedStrings.Common.accessibilityRetryHint)
     }
 }
+
+#Preview {
+    ErrorView(message: "Something went wrong", retry: {})
+}

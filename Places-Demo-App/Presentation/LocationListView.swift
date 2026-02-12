@@ -36,6 +36,7 @@ struct LocationListView: View {
                 } label: {
                     Label(LocalizedStrings.Places.add, systemImage: "plus.circle.fill")
                 }
+                .accessibilityHint(LocalizedStrings.Accessibility.Places.addButtonHint)
             }
         }
         .sheet(item: $router.presentedSheet, onDismiss: { router.dismissSheet() }) { route in
@@ -67,5 +68,15 @@ struct LocationListView: View {
             }
         }
         .listStyle(.insetGrouped)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(LocalizedStrings.Accessibility.Places.listLabel)
     }
+}
+
+#Preview {
+    LocationListView(
+        router: Router(),
+        viewModel: DependencyContainer.live.makeLocationsListViewModel(),
+        dependencies: DependencyContainer.live
+    )
 }

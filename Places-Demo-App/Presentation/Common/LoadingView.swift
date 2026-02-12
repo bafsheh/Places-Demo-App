@@ -17,3 +17,11 @@ struct LoadingView: View {
         .accessibilityLabel(message)
     }
 }
+
+#Preview {
+    LoadingView()
+}
+
+#Preview("Loading locations") {
+    LoadingView(message: LocalizedStrings.Places.loadingLocations)
+}

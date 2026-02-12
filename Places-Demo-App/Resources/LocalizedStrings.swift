@@ -34,6 +34,17 @@ enum LocalizedStrings {
 
     enum Accessibility {
         static var opensInWikipedia: String { String(localized: "accessibility.opensInWikipedia") }
+
+        enum AddLocation {
+            static var formLabel: String { String(localized: "accessibility.addLocation.formLabel") }
+            static var addButtonHint: String { String(localized: "accessibility.addLocation.addButtonHint") }
+            static var cancelButtonHint: String { String(localized: "accessibility.addLocation.cancelButtonHint") }
+        }
+
+        enum Places {
+            static var listLabel: String { String(localized: "accessibility.places.listLabel") }
+            static var addButtonHint: String { String(localized: "accessibility.places.addButtonHint") }
+        }
     }
 
     enum Location {
