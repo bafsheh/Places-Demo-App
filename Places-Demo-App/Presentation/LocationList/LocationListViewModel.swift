@@ -6,10 +6,11 @@ import Observation
 final class LocationListViewModel {
 
     private(set) var state: ViewState<[Location]> = .idle
-    private(set) var addedLocations: [Location] = []
 
     private let fetchLocationsUseCase: FetchLocationsUseCaseProtocol
     private let openWikipediaUseCase: OpenWikipediaUseCaseProtocol
+    
+    private var LocationList: [Location] = []
 
     init(
         fetchLocationsUseCase: FetchLocationsUseCaseProtocol,
@@ -23,15 +24,17 @@ final class LocationListViewModel {
         state = .loading
 
         do {
-            let locations = try await fetchLocationsUseCase.execute()
-            state = .loaded(locations)
+            LocationList = try await fetchLocationsUseCase.execute()
+            state = .loaded(LocationList)
         } catch {
             state = .error(error.localizedDescription)
         }
     }
 
     func addLocation(_ location: Location) {
-        addedLocations.append(location)
+        LocationList.append(location)
+        
+        state = .loaded(LocationList)
     }
 
     func openLocation(_ location: Location) async {

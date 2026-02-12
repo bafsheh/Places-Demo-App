@@ -8,18 +8,15 @@ struct ErrorView: View {
 
     var body: some View {
         ContentUnavailableView {
-            Label(LocalizedStrings.Common.error, systemImage: "exclamationmark.triangle.fill")
+            Label(LocalizationHelper.Common.error, systemImage: "exclamationmark.triangle.fill")
         } description: {
             Text(message)
         } actions: {
-            Button(LocalizedStrings.Common.retry, action: retry)
+            Button(LocalizationHelper.Common.retry, action: retry)
+                .accessibilityIdentifier(AccessibilityID.errorViewRetryButton.rawValue)
         }
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(LocalizedStrings.Common.error): \(message)")
-        .accessibilityHint(LocalizedStrings.Common.accessibilityRetryHint)
+        .accessibilityLabel("\(LocalizationHelper.Common.error): \(message)")
+        .accessibilityHint(LocalizationHelper.Common.accessibilityRetryHint)
     }
-}
-
-#Preview {
-    ErrorView(message: "Something went wrong", retry: {})
 }

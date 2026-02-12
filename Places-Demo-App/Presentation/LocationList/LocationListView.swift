@@ -17,9 +17,9 @@ struct LocationListView: View {
         ZStack {
             switch viewModel.state {
             case .idle, .loading:
-                LoadingView(message: LocalizedStrings.Places.loadingLocations)
+                LoadingView(message: LocalizationHelper.Places.loadingLocations)
             case .loaded(let locations):
-                locationsList(locations + viewModel.addedLocations)
+                locationsList(locations)
             case .error(let message):
                 ErrorView(message: message) {
                     Task {
@@ -28,15 +28,16 @@ struct LocationListView: View {
                 }
             }
         }
-        .navigationTitle(LocalizedStrings.Places.title)
+        .navigationTitle(LocalizationHelper.Places.title)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button {
                     router.present(.addLocation)
                 } label: {
-                    Label(LocalizedStrings.Places.add, systemImage: "plus.circle.fill")
+                    Label(LocalizationHelper.Places.add, systemImage: "plus.circle.fill")
                 }
-                .accessibilityHint(LocalizedStrings.Accessibility.Places.addButtonHint)
+                .accessibilityHint(Accessibility.Places.addButtonHint)
+                .accessibilityIdentifier(AccessibilityID.placesAddButton.rawValue)
             }
         }
         .sheet(item: $router.presentedSheet, onDismiss: { router.dismissSheet() }) { route in
@@ -69,14 +70,7 @@ struct LocationListView: View {
         }
         .listStyle(.insetGrouped)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel(LocalizedStrings.Accessibility.Places.listLabel)
+        .accessibilityLabel(Accessibility.Places.listLabel)
+        .accessibilityIdentifier(AccessibilityID.placesList.rawValue)
     }
-}
-
-#Preview {
-    LocationListView(
-        router: Router(),
-        viewModel: DependencyContainer.live.makeLocationsListViewModel(),
-        dependencies: DependencyContainer.live
-    )
 }

@@ -13,7 +13,3 @@ struct PlacesRouteDestinationView: View {
         }
     }
 }
-
-#Preview {
-    PlacesRouteDestinationView(route: .addLocation)
-}

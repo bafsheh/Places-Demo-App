@@ -3,7 +3,7 @@ import SwiftUI
 /// Reusable loading view with optional message. Use for any loading state (e.g. `LoadingView()` or `LoadingView(message: "Loading locations...")`).
 struct LoadingView: View {
 
-    var message: String = LocalizedStrings.Common.loading
+    var message: String = LocalizationHelper.Common.loading
 
     var body: some View {
         VStack(spacing: 16) {
@@ -15,13 +15,7 @@ struct LoadingView: View {
         }
         .accessibilityElement(children: .combine)
         .accessibilityLabel(message)
+        .accessibilityAddTraits(.updatesFrequently)
+        .accessibilityIdentifier(AccessibilityID.loadingView.rawValue)
     }
-}
-
-#Preview {
-    LoadingView()
-}
-
-#Preview("Loading locations") {
-    LoadingView(message: LocalizedStrings.Places.loadingLocations)
 }

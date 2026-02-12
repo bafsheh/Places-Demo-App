@@ -14,58 +14,66 @@ struct AddLocationView: View {
         NavigationStack {
             Form {
                 Section {
-                    TextField(LocalizedStrings.AddLocation.namePlaceholder, text: $viewModel.name)
+                    TextField(LocalizationHelper.AddLocation.namePlaceholder, text: $viewModel.name)
                         .textContentType(.name)
+                        .accessibilityLabel(Accessibility.AddLocation.nameField)
+                        .accessibilityHint(Accessibility.AddLocation.nameHint)
+                        .accessibilityIdentifier(AccessibilityID.addLocationNameField.rawValue)
                 } header: {
-                    Text(LocalizedStrings.AddLocation.sectionName)
+                    Text(LocalizationHelper.AddLocation.sectionName)
                 }
 
                 Section {
-                    TextField(LocalizedStrings.AddLocation.textFieldLatitude, text: $viewModel.latitude)
+                    TextField(LocalizationHelper.AddLocation.textFieldLatitude, text: $viewModel.latitude)
                         .keyboardType(.decimalPad)
-                    TextField(LocalizedStrings.AddLocation.textFieldLongitude, text: $viewModel.longitude)
+                        .accessibilityLabel(Accessibility.AddLocation.latitudeField)
+                        .accessibilityHint(Accessibility.AddLocation.latitudeHint)
+                        .accessibilityIdentifier(AccessibilityID.addLocationLatitudeField.rawValue)
+                    TextField(LocalizationHelper.AddLocation.textFieldLongitude, text: $viewModel.longitude)
                         .keyboardType(.decimalPad)
+                        .accessibilityLabel(Accessibility.AddLocation.longitudeField)
+                        .accessibilityHint(Accessibility.AddLocation.longitudeHint)
+                        .accessibilityIdentifier(AccessibilityID.addLocationLongitudeField.rawValue)
                 } header: {
-                    Text(LocalizedStrings.AddLocation.sectionCoordinates)
+                    Text(LocalizationHelper.AddLocation.sectionCoordinates)
                 } footer: {
-                    Text(LocalizedStrings.AddLocation.latLongFooter)
+                    Text(LocalizationHelper.AddLocation.latLongFooter)
                 }
             }
-            .navigationTitle(LocalizedStrings.AddLocation.title)
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel(Accessibility.AddLocation.formLabel)
+            .accessibilityIdentifier(AccessibilityID.addLocationForm.rawValue)
+            .navigationTitle(LocalizationHelper.AddLocation.title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button(LocalizedStrings.AddLocation.cancel) {
+                    Button(LocalizationHelper.AddLocation.cancel) {
                         dismiss()
                     }
-                    .accessibilityHint(LocalizedStrings.Accessibility.AddLocation.cancelButtonHint)
+                    .accessibilityHint(Accessibility.AddLocation.cancelButtonHint)
+                    .accessibilityIdentifier(AccessibilityID.addLocationCancelButton.rawValue)
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button(LocalizedStrings.AddLocation.add) {
+                    Button(LocalizationHelper.AddLocation.add) {
                         viewModel.submit()
                         
                         if viewModel.showError == false {
                             dismiss()
                         }
                     }
-                    .accessibilityHint(LocalizedStrings.Accessibility.AddLocation.addButtonHint)
+                    .accessibilityHint(Accessibility.AddLocation.addButtonHint)
+                    .accessibilityIdentifier(AccessibilityID.addLocationAddButton.rawValue)
                 }
             }
-            .alert(LocalizedStrings.AddLocation.alertInvalidTitle, isPresented: $viewModel.showError) {
-                Button(LocalizedStrings.AddLocation.alertOk) {
+            .alert(LocalizationHelper.AddLocation.alertInvalidTitle, isPresented: $viewModel.showError) {
+                Button(LocalizationHelper.AddLocation.alertOk) {
                     viewModel.showError = false
                 }
             } message: {
-                Text(LocalizedStrings.AddLocation.alertInvalidMessage)
+                Text(LocalizationHelper.AddLocation.alertInvalidMessage)
             }
         }
         .presentationDetents([.medium])
         .presentationDragIndicator(.visible)
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel(LocalizedStrings.Accessibility.AddLocation.formLabel)
     }
-}
-
-#Preview {
-    AddLocationView(viewModel: AddLocationViewModel(onSubmit: { _ in }))
 }

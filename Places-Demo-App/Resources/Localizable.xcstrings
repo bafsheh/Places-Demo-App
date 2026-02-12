@@ -6,13 +6,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Adds the location to your list"
+            "value" : "Adds the location to the list"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Voegt de locatie toe aan je lijst"
+            "value" : "Voegt de locatie toe aan de lijst"
           }
         }
       }
@@ -22,13 +22,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dismisses without saving"
+            "value" : "Dismisses the form without saving"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sluit zonder op te slaan"
+            "value" : "Sluit het formulier zonder op te slaan"
           }
         }
       }
@@ -38,45 +38,109 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Custom location form"
+            "value" : "Add custom location form"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Formulier aangepaste locatie"
+            "value" : "Formulier aangepaste locatie toevoegen"
           }
         }
       }
     },
-    "accessibility.places.addButtonHint" : {
+    "accessibility.addLocation.latitudeField" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Adds a new custom location"
+            "value" : "Latitude"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Voegt een nieuwe locatie toe"
+            "value" : "Breedte"
           }
         }
       }
     },
-    "accessibility.places.listLabel" : {
+    "accessibility.addLocation.latitudeHint" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Places list"
+            "value" : "Enter latitude between -90 and 90"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lijst met plaatsen"
+            "value" : "Voer breedte in tussen -90 en 90"
+          }
+        }
+      }
+    },
+    "accessibility.addLocation.longitudeField" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Longitude"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lengte"
+          }
+        }
+      }
+    },
+    "accessibility.addLocation.longitudeHint" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter longitude between -180 and 180"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voer lengte in tussen -180 en 180"
+          }
+        }
+      }
+    },
+    "accessibility.addLocation.nameField" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Location name"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Locatienaam"
+          }
+        }
+      }
+    },
+    "accessibility.addLocation.nameHint" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Optional name for the location"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Optionele naam voor de locatie"
           }
         }
       }
@@ -93,6 +157,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Opent in Wikipedia"
+          }
+        }
+      }
+    },
+    "accessibility.places.addButtonHint" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opens the form to add a custom location"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opent het formulier om een locatie toe te voegen"
+          }
+        }
+      }
+    },
+    "accessibility.places.listLabel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "List of places"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lijst met plaatsen"
           }
         }
       }
