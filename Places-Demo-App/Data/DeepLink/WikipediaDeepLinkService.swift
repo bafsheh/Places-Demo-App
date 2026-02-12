@@ -58,7 +58,7 @@ protocol WikipediaDeepLinkServiceProtocol: Sendable {
 ///
 /// Uses `WikipediaPlacesURLBuilder` for URL construction and `DeepLinkServiceProtocol` for opening; maps failures to `DeepLinkError.appNotInstalled(appName: "Wikipedia")` when appropriate.
 ///
-/// - SeeAlso: `WikipediaPlacesURLBuilder`, `DeepLinkServiceProtocol`, `OpenWikipediaUseCase`
+/// - SeeAlso: `WikipediaPlacesURLBuilder`, `DeepLinkServiceProtocol`, `WikipediaDeepLinkAdapter`
 final class WikipediaDeepLinkService: WikipediaDeepLinkServiceProtocol {
 
     private let deepLinkService: DeepLinkServiceProtocol
@@ -82,6 +82,46 @@ final class WikipediaDeepLinkService: WikipediaDeepLinkServiceProtocol {
             try await deepLinkService.open(url)
         } catch {
             throw DeepLinkError.appNotInstalled(appName: "Wikipedia")
+        }
+    }
+}
+
+// MARK: - Adapter (Data → Domain Port)
+
+/// Adapter that implements the Domain port `OpenWikipediaAtLocationPort` by delegating to `WikipediaDeepLinkService`.
+///
+/// **Adapter pattern (Clean Architecture):** Domain defines the port (`OpenWikipediaAtLocationPort`); Data implements it
+/// with this adapter, which wraps the existing `WikipediaDeepLinkService` and maps Data-layer `DeepLinkError` to
+/// Domain-layer `OpenWikipediaError`. This keeps Domain independent of Data while preserving existing deep link behavior.
+///
+/// - SeeAlso: `OpenWikipediaAtLocationPort`, `OpenWikipediaError`, `WikipediaDeepLinkService`, `OpenWikipediaUseCase`
+final class WikipediaDeepLinkAdapter: OpenWikipediaAtLocationPort {
+
+    private let deepLinkService: WikipediaDeepLinkServiceProtocol
+
+    /// Creates the adapter with the given Wikipedia deep link service.
+    ///
+    /// - Parameter deepLinkService: Service that builds and opens Wikipedia Places URLs (e.g. `WikipediaDeepLinkService`).
+    init(deepLinkService: WikipediaDeepLinkServiceProtocol) {
+        self.deepLinkService = deepLinkService
+    }
+
+    /// Opens Wikipedia at the specified location; maps `DeepLinkError` to `OpenWikipediaError`.
+    ///
+    /// - Parameter location: The location to show in Wikipedia Places.
+    /// - Throws: `OpenWikipediaError` when the URL cannot be built or opened.
+    func openPlaces(at location: Location) async throws {
+        do {
+            try await deepLinkService.openPlaces(at: location)
+        } catch let error as DeepLinkError {
+            switch error {
+            case .urlCreationFailed:
+                throw OpenWikipediaError.urlCreationFailed
+            case .cannotOpenURL:
+                throw OpenWikipediaError.cannotOpenURL
+            case .appNotInstalled(let appName):
+                throw OpenWikipediaError.appNotInstalled(appName: appName)
+            }
         }
     }
 }

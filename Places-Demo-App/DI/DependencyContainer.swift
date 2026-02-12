@@ -70,9 +70,10 @@ struct Dependencies: Sendable, AppDependenciesProtocol {
 
 /// Static container that builds the live dependency graph for production.
 ///
-/// Composes network, repository, deep link, and use case layers; exposes `live` as the single `Dependencies` instance. Tests do not use this; they build their own `Dependencies` with mocks.
+/// Composes network, repository, deep link adapter, and use case layers; exposes `live` as the single `Dependencies` instance.
+/// Wikipedia flow: `WikipediaDeepLinkService` is wrapped in `WikipediaDeepLinkAdapter` (implements `OpenWikipediaAtLocationPort`), then injected into `OpenWikipediaUseCase`. Tests build their own `Dependencies` with mocks.
 ///
-/// - SeeAlso: `Dependencies`, `AppDependenciesProtocol`, `FetchLocationsUseCase`, `OpenWikipediaUseCase`, `LocationRepository`
+/// - SeeAlso: `Dependencies`, `AppDependenciesProtocol`, `FetchLocationsUseCase`, `OpenWikipediaUseCase`, `WikipediaDeepLinkAdapter`, `LocationRepository`
 @MainActor
 enum DependencyContainer {
 
@@ -97,11 +98,14 @@ enum DependencyContainer {
     private static let wikipediaDeepLinkService: WikipediaDeepLinkServiceProtocol = WikipediaDeepLinkService(
         deepLinkService: deepLinkService
     )
+    private static let openWikipediaPort: OpenWikipediaAtLocationPort = WikipediaDeepLinkAdapter(
+        deepLinkService: wikipediaDeepLinkService
+    )
     private static let fetchLocationsUseCase: FetchLocationsUseCaseProtocol = FetchLocationsUseCase(
         repository: locationRepository
     )
     private static let openWikipediaUseCase: OpenWikipediaUseCaseProtocol = OpenWikipediaUseCase(
-        deepLinkService: wikipediaDeepLinkService
+        port: openWikipediaPort
     )
 
     // MARK: - Presentation (Dependencies)
