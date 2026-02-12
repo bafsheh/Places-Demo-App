@@ -14,16 +14,16 @@ import SwiftUI
 /// Drives UI from `viewModel.state` (idle/loading/loaded/error); presents add-location sheet via router; opens Wikipedia on row tap. Created by `Dependencies.makeRootView` and displayed as the root of the NavigationStack.
 ///
 struct LocationListView: View {
-
+    
     // MARK: - Properties
-
+    
     @Bindable var router: Router<PlacesRoute>
     @State private var viewModel: LocationListViewModel
     @State private var addLocationContinuation: CheckedContinuation<Location?, Never>?
     let dependencies: any AppDependenciesProtocol
-
+    
     // MARK: - Lifecycle
-
+    
     /// Creates the list view with the given router, view model, and dependencies (for sheet factory).
     ///
     /// - Parameters:
@@ -35,9 +35,9 @@ struct LocationListView: View {
         self.viewModel = viewModel
         self.dependencies = dependencies
     }
-
+    
     // MARK: - Body
-
+    
     /// ZStack that switches on `viewModel.state`: loading, list of locations, or error with retry; toolbar add button and sheet binding.
     var body: some View {
         ZStack {
@@ -75,7 +75,13 @@ struct LocationListView: View {
                 .accessibilityIdentifier(AccessibilityID.placesAddButton.rawValue)
             }
         }
-        .sheet(item: $router.presentedSheet, onDismiss: { router.dismissSheet() }) { route in
+        .sheet(item: $router.presentedSheet, onDismiss: {
+            if let continuation = addLocationContinuation {
+                continuation.resume(returning: nil)
+                addLocationContinuation = nil
+            }
+            router.dismissSheet()
+        }) { route in
             switch route {
             case .addLocation:
                 AddLocationSheetHost(
@@ -88,9 +94,9 @@ struct LocationListView: View {
             await viewModel.loadLocations()
         }
     }
-
+    
     // MARK: - Private
-
+    
     /// List of location rows with tap-to-open-Wikipedia; accessibility and list style applied.
     ///
     /// - Parameter locations: Loaded locations to display.
@@ -121,7 +127,7 @@ private struct AddLocationSheetHost: View {
     @Binding var continuation: CheckedContinuation<Location?, Never>?
     let dependencies: any AppDependenciesProtocol
     @State private var viewModel: AddLocationViewModel?
-
+    
     var body: some View {
         Group {
             if let viewModel {

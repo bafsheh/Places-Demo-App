@@ -34,7 +34,7 @@ struct LocationTests {
     @Test("displayName returns Unknown when name is nil")
     func displayName_withoutName() {
         let loc = Location(name: nil, latitude: 0, longitude: 0)
-        #expect(loc.displayName == "Unknown")
+        #expect(loc.displayName == LocalizationHelper.Location.unnamedLocation)
     }
 
     @Test("formattedCoordinates returns four decimal places")

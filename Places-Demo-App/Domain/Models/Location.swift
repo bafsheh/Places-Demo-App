@@ -45,7 +45,7 @@ struct Location: Identifiable, Equatable, Sendable {
 
     /// Display name for UI; falls back to `"Unknown"` when `name` is nil.
     var displayName: String {
-        name ?? "Unknown"
+        name ?? LocalizationHelper.Location.unnamedLocation
     }
 
     /// Coordinates formatted as `"lat, long"` with four decimal places.
