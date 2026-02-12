@@ -11,12 +11,11 @@ import SwiftUI
 
 /// View displayed when an error occurs; uses `ContentUnavailableView` with message and retry button.
 ///
-/// Caller provides the error message and retry action (e.g. re-call `loadLocations()`). Uses `AccessibilityID.errorViewRetryButton` for UI tests.
+/// Caller provides the error message and retry action (e.g. re-call `loadLocations()`). The message is typically taken from `ViewState.errorMessage` when switching on `ViewState.error(error:message:)`. Uses `AccessibilityID.errorViewRetryButton` for UI tests.
 ///
-/// - SeeAlso: `ViewState`, `LocationListView`
 struct ErrorView: View {
 
-    /// Error message to display in the description.
+    /// User-facing error message to display (e.g. from `ViewState.errorMessage` or `ViewState.error(_, message)`).
     let message: String
 
     /// Action to perform when the user taps Retry (e.g. reload locations).

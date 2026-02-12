@@ -14,7 +14,6 @@ import Foundation
 /// Used across the app for list display, add-location form, and deep linking to Wikipedia.
 /// Conforms to `Identifiable` (by `id`), `Equatable` (by `id`), and `Sendable` for safe use from async contexts.
 ///
-/// - SeeAlso: `LocationDTO` (API shape), `Coordinate`
 struct Location: Identifiable, Equatable, Sendable {
 
     /// Unique identifier for the location; defaults to a new UUID when created from user input.

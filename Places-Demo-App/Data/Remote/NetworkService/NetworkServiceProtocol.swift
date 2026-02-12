@@ -11,7 +11,6 @@ import Foundation
 
 /// HTTP methods supported by the network service.
 ///
-/// - SeeAlso: `EndpointProtocol`, `NetworkService`
 enum HTTPMethod: String, Sendable {
     case get = "GET"
     case post = "POST"
@@ -24,7 +23,6 @@ enum HTTPMethod: String, Sendable {
 ///
 /// Conform to this protocol to add new API endpoints (e.g. locations, favorites) without changing the network service.
 ///
-/// - SeeAlso: `LocationsEndpoint`, `NetworkConfiguration`, `NetworkServiceProtocol`
 protocol EndpointProtocol: Sendable {
 
     /// Path segment appended to the configuration base URL (e.g. `"/path/to/resource"`).
@@ -45,7 +43,6 @@ protocol EndpointProtocol: Sendable {
 ///
 /// Implementations (e.g. `NetworkService` actor) isolate I/O and are safe to use from concurrent contexts.
 ///
-/// - SeeAlso: `NetworkService`, `EndpointProtocol`, `NetworkError`
 protocol NetworkServiceProtocol: Sendable {
 
     /// Performs a network request for the given endpoint and decodes the response to type `T`.

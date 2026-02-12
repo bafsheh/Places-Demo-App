@@ -14,7 +14,6 @@ import Observation
 ///
 /// Add cases (e.g. `locationDetail(Location)`) when adding new screens; use with `Router<PlacesRoute>` and `PlacesRouteDestinationView`.
 ///
-/// - SeeAlso: `Router`, `PlacesRouteDestinationView`, `LocationListView`
 enum PlacesRoute: Hashable, Identifiable {
 
     /// Presents the add-location sheet (e.g. from toolbar button).
@@ -28,7 +27,6 @@ enum PlacesRoute: Hashable, Identifiable {
 ///
 /// Holds the navigation path (push stack) and the currently presented sheet route. Reusable for any `Route` that is `Hashable` and `Identifiable`. Used with `PlacesRoute` in this app.
 ///
-/// - SeeAlso: `PlacesRoute`, `RootView`, `LocationListView`
 @MainActor
 @Observable
 final class Router<Route: Hashable & Identifiable> {

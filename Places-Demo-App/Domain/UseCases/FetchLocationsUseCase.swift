@@ -10,8 +10,6 @@
 import Foundation
 
 /// Contract for the fetch-locations use case; allows injection of mocks in tests.
-///
-/// - SeeAlso: `FetchLocationsUseCase`, `LocationRepositoryProtocol`, `Location`
 protocol FetchLocationsUseCaseProtocol: Sendable {
 
     /// Fetches the current list of locations from the repository.
@@ -24,8 +22,6 @@ protocol FetchLocationsUseCaseProtocol: Sendable {
 /// Use case that fetches locations from the repository for display in the list.
 ///
 /// Delegates to `LocationRepositoryProtocol`; used by `LocationListViewModel` to load data on appear and retry.
-///
-/// - SeeAlso: `LocationRepositoryProtocol`, `LocationListViewModel`, `Location`
 final class FetchLocationsUseCase: FetchLocationsUseCaseProtocol {
 
     private let repository: LocationRepositoryProtocol

@@ -2,22 +2,16 @@
 //  AddLocationViewModelTests.swift
 //  Places-Demo-AppTests
 //
-//  Purpose: Unit tests for AddLocationViewModel (validation, submit, cancel).
-//  Dependencies: @testable Places_Demo_App, Location.
-//
 
 import Testing
 @testable import Places_Demo_App
 
 @MainActor
-@Suite
+@Suite("AddLocationViewModel validation, submit and cancel")
 struct AddLocationViewModelTests {
 
-    // MARK: - validation_validCoordinates
-
-    @Test
+    @Test("submit with valid coordinates resumes continuation with Location and does not set showError")
     func validation_validCoordinates() async throws {
-        // Given: name="Test", lat="52.0", long="4.0"
         var showErrorAfterSubmit = false
         let resultOpt = await withCheckedContinuation { (continuation: CheckedContinuation<Location?, Never>) in
             let vm = AddLocationViewModel(continuation: continuation)
@@ -28,7 +22,6 @@ struct AddLocationViewModelTests {
             showErrorAfterSubmit = vm.showError
         }
 
-        // Then: continuation resumes with Location; showError is false
         let result = try #require(resultOpt)
         #expect(result.name == "Test")
         #expect(abs(result.coordinate.latitude - 52.0) < 0.001)
@@ -36,11 +29,8 @@ struct AddLocationViewModelTests {
         #expect(!showErrorAfterSubmit)
     }
 
-    // MARK: - validation_invalidLatitude_tooHigh
-
-    @Test
+    @Test("submit with latitude above 90 sets showError")
     func validation_invalidLatitude_tooHigh() async {
-        // Given: lat="91.0"
         var showErrorValue = false
         _ = await withCheckedContinuation { (continuation: CheckedContinuation<Location?, Never>) in
             let vm = AddLocationViewModel(continuation: continuation)
@@ -55,15 +45,11 @@ struct AddLocationViewModelTests {
             }
         }
 
-        // Then: showError is true
         #expect(showErrorValue)
     }
 
-    // MARK: - validation_invalidLatitude_tooLow
-
-    @Test
+    @Test("submit with latitude below -90 sets showError")
     func validation_invalidLatitude_tooLow() async {
-        // Given: lat="-91.0"
         var showErrorValue = false
         _ = await withCheckedContinuation { (continuation: CheckedContinuation<Location?, Never>) in
             let vm = AddLocationViewModel(continuation: continuation)
@@ -81,11 +67,8 @@ struct AddLocationViewModelTests {
         #expect(showErrorValue)
     }
 
-    // MARK: - validation_invalidLongitude_tooHigh
-
-    @Test
+    @Test("submit with longitude above 180 sets showError")
     func validation_invalidLongitude_tooHigh() async {
-        // Given: long="181.0"
         var showErrorValue = false
         _ = await withCheckedContinuation { (continuation: CheckedContinuation<Location?, Never>) in
             let vm = AddLocationViewModel(continuation: continuation)
@@ -103,11 +86,8 @@ struct AddLocationViewModelTests {
         #expect(showErrorValue)
     }
 
-    // MARK: - validation_invalidLongitude_tooLow
-
-    @Test
+    @Test("submit with longitude below -180 sets showError")
     func validation_invalidLongitude_tooLow() async {
-        // Given: long="-181.0"
         var showErrorValue = false
         _ = await withCheckedContinuation { (continuation: CheckedContinuation<Location?, Never>) in
             let vm = AddLocationViewModel(continuation: continuation)
@@ -125,11 +105,8 @@ struct AddLocationViewModelTests {
         #expect(showErrorValue)
     }
 
-    // MARK: - validation_invalidNumber
-
-    @Test
+    @Test("submit with non-numeric latitude sets showError")
     func validation_invalidNumber() async {
-        // Given: lat="not a number"
         var showErrorValue = false
         _ = await withCheckedContinuation { (continuation: CheckedContinuation<Location?, Never>) in
             let vm = AddLocationViewModel(continuation: continuation)
@@ -147,11 +124,8 @@ struct AddLocationViewModelTests {
         #expect(showErrorValue)
     }
 
-    // MARK: - cancel
-
-    @Test
+    @Test("cancel resumes continuation with nil and does not set showError")
     func cancel() async {
-        // When: cancel() called
         var showErrorValue = false
         let result = await withCheckedContinuation { (continuation: CheckedContinuation<Location?, Never>) in
             let vm = AddLocationViewModel(continuation: continuation)
@@ -162,7 +136,6 @@ struct AddLocationViewModelTests {
             showErrorValue = vm.showError
         }
 
-        // Then: continuation resumes with nil; showError is false
         #expect(result == nil)
         #expect(!showErrorValue)
     }

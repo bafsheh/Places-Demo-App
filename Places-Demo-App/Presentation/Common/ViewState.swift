@@ -9,22 +9,67 @@
 
 import Foundation
 
-/// Reusable view state for async loading: idle, loading, loaded content, or error.
+/// Represents the state of a view's data fetching or operation
 ///
-/// ViewModels expose this so views can switch on the state to show loading UI, content, or error with retry. `Content` must be `Equatable` for SwiftUI diffing and `Sendable` for Swift 6 strict concurrency.
-///
-/// - SeeAlso: `LocationListViewModel`, `LoadingView`, `ErrorView`
-enum ViewState<Content: Equatable & Sendable>: Equatable, Sendable {
+/// Generic over Content type to support different data models.
+/// Error case includes both typed Error and user-facing message.
+enum ViewState<Content: Equatable & Sendable>: Sendable {
 
-    /// Initial state before any load has started.
+    /// Initial state before any operation
     case idle
 
-    /// A load is in progress; show loading indicator.
+    /// Operation in progress
     case loading
 
-    /// Load succeeded; show the associated content.
+    /// Operation completed successfully with data
     case loaded(Content)
 
-    /// Load failed; associated string is the error message to display (e.g. for retry UI).
-    case error(String)
+    /// Operation failed with error
+    ///
+    /// - Parameters:
+    ///   - error: The underlying error (for logging/analytics)
+    ///   - message: User-facing error message (localized)
+    case error(error: Error, message: String)
+
+    /// Convenience: Check if currently loading
+    var isLoading: Bool {
+        if case .loading = self { return true }
+        return false
+    }
+
+    /// Convenience: Get loaded content if available
+    var content: Content? {
+        if case .loaded(let content) = self { return content }
+        return nil
+    }
+
+    /// Convenience: Get error message if in error state
+    var errorMessage: String? {
+        if case .error(_, let message) = self { return message }
+        return nil
+    }
+
+    /// Convenience: Get underlying error if in error state
+    var underlyingError: Error? {
+        if case .error(let error, _) = self { return error }
+        return nil
+    }
+}
+
+// MARK: - Equatable
+
+extension ViewState: Equatable {
+    static func == (lhs: ViewState<Content>, rhs: ViewState<Content>) -> Bool {
+        switch (lhs, rhs) {
+        case (.idle, .idle), (.loading, .loading):
+            return true
+        case (.loaded(let lhsContent), .loaded(let rhsContent)):
+            return lhsContent == rhsContent
+        case (.error(_, let lhsMessage), .error(_, let rhsMessage)):
+            // Compare messages only (errors may not be Equatable)
+            return lhsMessage == rhsMessage
+        default:
+            return false
+        }
+    }
 }

@@ -14,7 +14,6 @@ import Foundation
 /// Use cases throw these types so that Presentation and tests depend only on Domain, not on Data layer errors (e.g. `DeepLinkError`).
 /// Adapters in the Data layer catch infrastructure errors and map them to these cases.
 ///
-/// - SeeAlso: `OpenWikipediaUseCase`, `OpenWikipediaAtLocationPort`, `WikipediaDeepLinkAdapter`
 enum OpenWikipediaError: LocalizedError, Sendable {
 
     /// URL for the location could not be constructed (e.g. invalid components).

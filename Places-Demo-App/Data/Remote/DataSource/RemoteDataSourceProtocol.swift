@@ -13,7 +13,6 @@ import Foundation
 ///
 /// Implementations typically call a network service and return raw DTOs; the repository maps them to domain entities.
 ///
-/// - SeeAlso: `RemoteDataSource`, `LocationRepository`, `LocationDTO`
 protocol RemoteDataSourceProtocol: Sendable {
 
     /// Fetches locations from the remote source.

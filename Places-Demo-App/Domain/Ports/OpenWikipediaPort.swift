@@ -15,7 +15,6 @@ import Foundation
 /// the Data (or Infrastructure) layer provides an **adapter** that implements this interface (e.g. via deep links).
 /// Domain must not depend on Data, so this protocol lives in Domain and has no reference to deep links or Data types.
 ///
-/// - SeeAlso: `OpenWikipediaUseCase`, `WikipediaDeepLinkAdapter`, `Location`
 protocol OpenWikipediaAtLocationPort: Sendable {
 
     /// Opens Wikipedia (or fallback) at the specified location (e.g. Places tab with coordinates).

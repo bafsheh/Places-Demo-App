@@ -13,7 +13,6 @@ import SwiftUI
 ///
 /// Drives UI from `viewModel.state` (idle/loading/loaded/error); presents add-location sheet via router; opens Wikipedia on row tap. Created by `Dependencies.makeRootView` and displayed as the root of the NavigationStack.
 ///
-/// - SeeAlso: `LocationListViewModel`, `ViewState`, `Router`, `AppDependenciesProtocol`
 struct LocationListView: View {
 
     // MARK: - Properties
@@ -47,7 +46,7 @@ struct LocationListView: View {
                 LoadingView(message: LocalizationHelper.Places.loadingLocations)
             case .loaded(let locations):
                 locationsList(locations)
-            case .error(let message):
+            case .error(_, let message):
                 ErrorView(message: message) {
                     Task {
                         await viewModel.loadLocations()

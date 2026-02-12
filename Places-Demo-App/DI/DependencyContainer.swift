@@ -14,8 +14,6 @@ import UIKit
 /// Protocol for app dependency injection; view factories run on the main actor (Swift 6).
 ///
 /// Implementations provide the root view and view model factories so the app and tests can use different dependency graphs. Production uses `DependencyContainer.live`; tests build a `Dependencies` (or test double) in the test target.
-///
-/// - SeeAlso: `Dependencies`, `DependencyContainer`, `RootView`, `LocationListView`
 @MainActor
 protocol AppDependenciesProtocol {
 
@@ -40,8 +38,6 @@ protocol AppDependenciesProtocol {
 /// Holds protocol-typed use cases and conforms to `AppDependenciesProtocol` for injection into views.
 ///
 /// Built by `DependencyContainer.live` in production; tests can construct a `Dependencies` with mock use cases (e.g. `TestDependencies.make()`). MainActor methods ensure view creation runs on the main thread.
-///
-/// - SeeAlso: `AppDependenciesProtocol`, `DependencyContainer`, `FetchLocationsUseCaseProtocol`, `OpenWikipediaUseCaseProtocol`
 struct Dependencies: Sendable, AppDependenciesProtocol {
 
     let fetchLocationsUseCase: any FetchLocationsUseCaseProtocol
@@ -72,8 +68,6 @@ struct Dependencies: Sendable, AppDependenciesProtocol {
 ///
 /// Composes network, repository, deep link adapter, and use case layers; exposes `live` as the single `Dependencies` instance.
 /// Wikipedia flow: `WikipediaDeepLinkService` is wrapped in `WikipediaDeepLinkAdapter` (implements `OpenWikipediaAtLocationPort`), then injected into `OpenWikipediaUseCase`. Tests build their own `Dependencies` with mocks.
-///
-/// - SeeAlso: `Dependencies`, `AppDependenciesProtocol`, `FetchLocationsUseCase`, `OpenWikipediaUseCase`, `WikipediaDeepLinkAdapter`, `LocationRepository`
 @MainActor
 enum DependencyContainer {
 

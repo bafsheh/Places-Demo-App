@@ -13,7 +13,6 @@ import Foundation
 ///
 /// Uses `String` for decoding/network cases to remain `Sendable` under Swift 6 strict concurrency. Conforms to `LocalizedError` for user-facing messages.
 ///
-/// - SeeAlso: `NetworkService`, `RemoteDataSource`
 enum NetworkError: LocalizedError, Sendable {
 
     /// URL construction failed (e.g. invalid base URL + path).

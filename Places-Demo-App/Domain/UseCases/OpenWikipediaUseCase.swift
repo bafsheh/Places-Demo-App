@@ -10,8 +10,6 @@
 import Foundation
 
 /// Contract for opening Wikipedia at a location; allows injection of mocks in tests.
-///
-/// - SeeAlso: `OpenWikipediaUseCase`, `OpenWikipediaAtLocationPort`, `Location`
 protocol OpenWikipediaUseCaseProtocol: Sendable {
 
     /// Opens the Wikipedia app (or fallback) at the given location (e.g. Places tab with coordinates).
@@ -24,8 +22,6 @@ protocol OpenWikipediaUseCaseProtocol: Sendable {
 /// Use case that opens Wikipedia at a location via a Domain port (e.g. implemented by a deep link adapter).
 ///
 /// Delegates to `OpenWikipediaAtLocationPort`; the Data layer provides an adapter that implements this port. Used when the user taps "Open in Wikipedia" in the list.
-///
-/// - SeeAlso: `OpenWikipediaAtLocationPort`, `LocationListViewModel`, `Location`, `OpenWikipediaError`
 final class OpenWikipediaUseCase: OpenWikipediaUseCaseProtocol {
 
     private let port: OpenWikipediaAtLocationPort

@@ -10,8 +10,6 @@
 import Foundation
 
 /// Builds Wikipedia Places deep link URLs (`wikipedia://places?lat=...&long=...&name=...`).
-///
-/// - SeeAlso: `Location`, `WikipediaDeepLinkService`
 enum WikipediaPlacesURLBuilder: Sendable {
 
     private enum Constants {
@@ -42,8 +40,6 @@ enum WikipediaPlacesURLBuilder: Sendable {
 }
 
 /// Contract for opening Wikipedia Places at a location; allows injection of mocks in tests.
-///
-/// - SeeAlso: `WikipediaDeepLinkService`, `OpenWikipediaUseCase`, `Location`
 protocol WikipediaDeepLinkServiceProtocol: Sendable {
 
     /// Opens the Wikipedia app (or fallback) at the specified location (e.g. Places tab with coordinates).
@@ -56,8 +52,6 @@ protocol WikipediaDeepLinkServiceProtocol: Sendable {
 /// Wikipedia-specific deep link handler; builds Places URL and opens it via the generic deep link service.
 ///
 /// Uses `WikipediaPlacesURLBuilder` for URL construction and `DeepLinkServiceProtocol` for opening; maps failures to `DeepLinkError.appNotInstalled(appName: "Wikipedia")` when appropriate.
-///
-/// - SeeAlso: `WikipediaPlacesURLBuilder`, `DeepLinkServiceProtocol`, `WikipediaDeepLinkAdapter`
 final class WikipediaDeepLinkService: WikipediaDeepLinkServiceProtocol {
 
     private let deepLinkService: DeepLinkServiceProtocol
@@ -92,8 +86,6 @@ final class WikipediaDeepLinkService: WikipediaDeepLinkServiceProtocol {
 /// **Adapter pattern (Clean Architecture):** Domain defines the port (`OpenWikipediaAtLocationPort`); Data implements it
 /// with this adapter, which wraps the existing `WikipediaDeepLinkService` and maps Data-layer `DeepLinkError` to
 /// Domain-layer `OpenWikipediaError`. This keeps Domain independent of Data while preserving existing deep link behavior.
-///
-/// - SeeAlso: `OpenWikipediaAtLocationPort`, `OpenWikipediaError`, `WikipediaDeepLinkService`, `OpenWikipediaUseCase`
 final class WikipediaDeepLinkAdapter: OpenWikipediaAtLocationPort {
 
     private let deepLinkService: WikipediaDeepLinkServiceProtocol

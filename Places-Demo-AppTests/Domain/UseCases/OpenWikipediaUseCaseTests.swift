@@ -2,18 +2,13 @@
 //  OpenWikipediaUseCaseTests.swift
 //  Places-Demo-AppTests
 //
-//  Purpose: Unit tests for OpenWikipediaUseCase (execute success/failure via port).
-//  Dependencies: @testable Places_Demo_App, OpenWikipediaUseCase, WikipediaDeepLinkAdapter, MockWikipediaDeepLinkService, Location, OpenWikipediaError, DeepLinkError.
-//
 
 import Testing
 @testable import Places_Demo_App
 
 @MainActor
-@Suite
+@Suite("OpenWikipediaUseCase execute via port adapter")
 struct OpenWikipediaUseCaseTests {
-
-    // MARK: - Fixtures
 
     private var sampleLocation: Location {
         Location(name: "Amsterdam", latitude: 52.37, longitude: 4.89)
@@ -24,19 +19,14 @@ struct OpenWikipediaUseCaseTests {
         return OpenWikipediaUseCase(port: adapter)
     }
 
-    // MARK: - execute_success
-
-    @Test
+    @Test("execute succeeds and calls service with correct location when service succeeds")
     func execute_success() async throws {
-        // Given: MockWikipediaDeepLinkService succeeds
         let mockService = MockWikipediaDeepLinkService()
         let useCase = makeUseCase(deepLinkService: mockService)
         let location = sampleLocation
 
-        // When: useCase.execute(location) called
         try await useCase.execute(location: location)
 
-        // Then: No error thrown; service was called with correct location
         #expect(mockService.openedLocations.count == 1)
         let first = try #require(mockService.openedLocations.first)
         #expect(first.name == location.name)
@@ -44,18 +34,13 @@ struct OpenWikipediaUseCaseTests {
         #expect(abs(first.coordinate.longitude - location.coordinate.longitude) < 0.001)
     }
 
-    // MARK: - execute_failure_urlCreation
-
-    @Test
+    @Test("execute throws urlCreationFailed when service throws urlCreationFailed")
     func execute_failure_urlCreation() async {
-        // Given: Service throws DeepLinkError.urlCreationFailed
         let mockService = MockWikipediaDeepLinkService()
         mockService.errorToThrow = DeepLinkError.urlCreationFailed
         let useCase = makeUseCase(deepLinkService: mockService)
         let location = sampleLocation
 
-        // When: useCase.execute(location) called
-        // Then: Error propagated (as OpenWikipediaError via adapter)
         do {
             try await useCase.execute(location: location)
             #expect(Bool(false), "Expected throw")
@@ -68,18 +53,13 @@ struct OpenWikipediaUseCaseTests {
         }
     }
 
-    // MARK: - execute_failure_appNotInstalled
-
-    @Test
+    @Test("execute throws appNotInstalled when service throws appNotInstalled")
     func execute_failure_appNotInstalled() async {
-        // Given: Service throws DeepLinkError.appNotInstalled
         let mockService = MockWikipediaDeepLinkService()
         mockService.errorToThrow = DeepLinkError.appNotInstalled(appName: "Wikipedia")
         let useCase = makeUseCase(deepLinkService: mockService)
         let location = sampleLocation
 
-        // When: useCase.execute(location) called
-        // Then: Error propagated with message
         do {
             try await useCase.execute(location: location)
             #expect(Bool(false), "Expected throw")

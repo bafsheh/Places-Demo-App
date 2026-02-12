@@ -13,7 +13,6 @@ import Foundation
 ///
 /// Isolates network I/O so it is safe to use from concurrent contexts. Validates HTTP status (2xx) and maps failures to `NetworkError`.
 ///
-/// - SeeAlso: `NetworkServiceProtocol`, `EndpointProtocol`, `NetworkError`, `RemoteDataSource`
 actor NetworkService: NetworkServiceProtocol {
 
     private let session: URLSession

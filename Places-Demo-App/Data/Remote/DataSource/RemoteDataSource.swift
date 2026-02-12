@@ -13,7 +13,6 @@ import Foundation
 ///
 /// Uses `LocationsEndpoint.locations` and decodes `LocationsResponse`; does not map to domain entities (repository does that).
 ///
-/// - SeeAlso: `RemoteDataSourceProtocol`, `NetworkService`, `LocationRepository`, `LocationDTO`
 final class RemoteDataSource: RemoteDataSourceProtocol {
 
     private let networkService: NetworkServiceProtocol

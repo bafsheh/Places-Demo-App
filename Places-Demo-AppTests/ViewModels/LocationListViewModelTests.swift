@@ -2,18 +2,13 @@
 //  LocationListViewModelTests.swift
 //  Places-Demo-AppTests
 //
-//  Purpose: Unit tests for LocationListViewModel (load, add, open location; state transitions).
-//  Dependencies: @testable Places_Demo_App, MockFetchLocationsUseCase, MockOpenWikipediaUseCase, ViewState, Location, NetworkError, OpenWikipediaError.
-//
 
 import Testing
 @testable import Places_Demo_App
 
 @MainActor
-@Suite
+@Suite("LocationListViewModel load, add, open location and state transitions")
 struct LocationListViewModelTests {
-
-    // MARK: - Fixtures
 
     private func makeSampleLocations(count: Int = 3) -> [Location] {
         (0..<count).map { i in
@@ -21,32 +16,14 @@ struct LocationListViewModelTests {
         }
     }
 
-    private func makeViewModel(
-        fetchUseCase: MockFetchLocationsUseCase? = nil,
-        openUseCase: MockOpenWikipediaUseCase? = nil
-    ) -> LocationListViewModel {
-        let fetch = fetchUseCase ?? MockFetchLocationsUseCase()
-        let open = openUseCase ?? MockOpenWikipediaUseCase()
-        return LocationListViewModel(
-            fetchLocationsUseCase: fetch,
-            openWikipediaUseCase: open
-        )
-    }
-
-    // MARK: - loadLocations_success
-
-    @Test
+    @Test("loadLocations sets state to loaded with locations when fetch succeeds")
     func loadLocations_success() async {
-        // Given: MockFetchLocationsUseCase returns 3 locations
         let locations = makeSampleLocations(count: 3)
-        let mockFetch = MockFetchLocationsUseCase()
-        mockFetch.locationsToReturn = locations
-        let viewModel = makeViewModel(fetchUseCase: mockFetch)
+        let (deps, _, _) = TestDependencies.makeForLocationList(locations: locations)
+        let viewModel = deps.makeLocationsListViewModel()
 
-        // When: viewModel.loadLocations() called
         await viewModel.loadLocations()
 
-        // Then: state is .loaded([Location])
         guard case .loaded(let loaded) = viewModel.state else {
             #expect(Bool(false), "Expected state .loaded with 3 items, got \(viewModel.state)")
             return
@@ -57,47 +34,36 @@ struct LocationListViewModelTests {
         #expect(loaded.map { $0.coordinate.longitude } == locations.map { $0.coordinate.longitude })
     }
 
-    // MARK: - loadLocations_failure
-
-    @Test
+    @Test("loadLocations sets state to error when fetch throws")
     func loadLocations_failure() async {
-        // Given: MockFetchLocationsUseCase throws NetworkError.noData
-        let mockFetch = MockFetchLocationsUseCase()
-        mockFetch.errorToThrow = NetworkError.noData
-        let viewModel = makeViewModel(fetchUseCase: mockFetch)
+        let deps = TestDependencies.makeWithErrors(fetchError: NetworkError.noData)
+        let viewModel = deps.makeLocationsListViewModel()
 
-        // When: viewModel.loadLocations() called
         await viewModel.loadLocations()
 
-        // Then: state is .error(String)
-        guard case .error(let message) = viewModel.state else {
+        guard case .error(let error, let message) = viewModel.state else {
             #expect(Bool(false), "Expected state .error, got \(viewModel.state)")
             return
         }
+        #expect(error is NetworkError, "Expected underlying error to be NetworkError")
         #expect(
             message.contains("noData") || message.lowercased().contains("no data") || message.contains("No data"),
             "Error message should contain noData or localized description, got: \(message)"
         )
     }
 
-    // MARK: - loadLocations_setsLoadingState
-
-    @Test
+    @Test("loadLocations transitions state from idle through loading to loaded")
     func loadLocations_setsLoadingState() async throws {
-        // Given: Use case returns after delay
         let locations = makeSampleLocations(count: 2)
-        let mockFetch = MockFetchLocationsUseCase()
-        mockFetch.locationsToReturn = locations
-        mockFetch.delayNanoseconds = 50_000_000 // 0.05s
-        let viewModel = makeViewModel(fetchUseCase: mockFetch)
+        let (deps, fetchMock, _) = TestDependencies.makeForLocationList(locations: locations)
+        fetchMock.delayNanoseconds = 50_000_000
+        let viewModel = deps.makeLocationsListViewModel()
 
-        // When: viewModel.loadLocations() called (start load in task so we can observe state)
         var states: [ViewState<[Location]>] = []
         let loadTask = Task {
             if case .idle = viewModel.state { states.append(.idle) }
             await viewModel.loadLocations()
         }
-        // Brief yield to let loadLocations() set .loading
         try await Task.sleep(nanoseconds: 1_000_000)
         if case .loading = viewModel.state {
             states.append(.loading)
@@ -107,7 +73,6 @@ struct LocationListViewModelTests {
             states.append(.loaded(content))
         }
 
-        // Then: state transitions idle → loading → loaded
         #expect(states.count == 3, "Expected idle, loading, loaded")
         if states.count >= 1 { #expect(states[0] == .idle) }
         if states.count >= 2 { #expect(states[1] == .loading) }
@@ -116,15 +81,11 @@ struct LocationListViewModelTests {
         }
     }
 
-    // MARK: - addLocation_success
-
-    @Test
+    @Test("addLocation appends location and updates state to loaded with new list")
     func addLocation_success() async {
-        // Given: ViewModel with loaded locations
         let initial = makeSampleLocations(count: 2)
-        let mockFetch = MockFetchLocationsUseCase()
-        mockFetch.locationsToReturn = initial
-        let viewModel = makeViewModel(fetchUseCase: mockFetch)
+        let (deps, _, _) = TestDependencies.makeForLocationList(locations: initial)
+        let viewModel = deps.makeLocationsListViewModel()
         await viewModel.loadLocations()
         guard case .loaded(let before) = viewModel.state else {
             #expect(Bool(false), "Expected loaded state after loadLocations")
@@ -134,10 +95,8 @@ struct LocationListViewModelTests {
 
         let newLocation = Location(name: "New", latitude: 52.5, longitude: 4.5)
 
-        // When: viewModel.addLocation(newLocation) called
         viewModel.addLocation(newLocation)
 
-        // Then: location added to array; state remains .loaded with updated array
         guard case .loaded(let after) = viewModel.state else {
             #expect(Bool(false), "Expected state .loaded after addLocation, got \(viewModel.state)")
             return
@@ -149,46 +108,36 @@ struct LocationListViewModelTests {
         #expect(hasNew)
     }
 
-    // MARK: - openLocation_success
-
-    @Test
+    @Test("openLocation does not set error and calls use case when open succeeds")
     func openLocation_success() async throws {
-        // Given: MockOpenWikipediaUseCase succeeds
         let location = Location(name: "Amsterdam", latitude: 52.37, longitude: 4.89)
-        let mockOpen = MockOpenWikipediaUseCase()
-        let viewModel = makeViewModel(openUseCase: mockOpen)
+        let (deps, _, openMock) = TestDependencies.makeForLocationList()
+        let viewModel = deps.makeLocationsListViewModel()
 
-        // When: viewModel.openLocation(location) called
         await viewModel.openLocation(location)
 
-        // Then: No error state; use case execute() was called
-        if case .error(let msg) = viewModel.state {
+        if case .error(_, let msg) = viewModel.state {
             #expect(Bool(false), "Expected no error state after openLocation success: \(msg)")
         }
-        #expect(mockOpen.openedLocations.count == 1)
-        let opened = try #require(mockOpen.openedLocations.first)
+        #expect(openMock.openedLocations.count == 1)
+        let opened = try #require(openMock.openedLocations.first)
         #expect(opened.name == "Amsterdam")
         #expect(abs(opened.coordinate.latitude - 52.37) < 0.001)
     }
 
-    // MARK: - openLocation_failure
-
-    @Test
+    @Test("openLocation sets state to error when open use case throws")
     func openLocation_failure() async {
-        // Given: MockOpenWikipediaUseCase throws DeepLinkError.appNotInstalled
         let location = Location(name: "Paris", latitude: 48.85, longitude: 2.35)
-        let mockOpen = MockOpenWikipediaUseCase()
-        mockOpen.errorToThrow = OpenWikipediaError.appNotInstalled(appName: "Wikipedia")
-        let viewModel = makeViewModel(openUseCase: mockOpen)
+        let deps = TestDependencies.makeWithErrors(openError: OpenWikipediaError.appNotInstalled(appName: "Wikipedia"))
+        let viewModel = deps.makeLocationsListViewModel()
 
-        // When: viewModel.openLocation(location) called
         await viewModel.openLocation(location)
 
-        // Then: state is .error(String); error message appropriate
-        guard case .error(let message) = viewModel.state else {
+        guard case .error(let error, let message) = viewModel.state else {
             #expect(Bool(false), "Expected state .error after openLocation failure, got \(viewModel.state)")
             return
         }
+        #expect(error is OpenWikipediaError, "Expected underlying error to be OpenWikipediaError")
         #expect(
             message.lowercased().contains("wikipedia") || message.lowercased().contains("installed"),
             "Error message should reference app not installed, got: \(message)"

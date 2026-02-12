@@ -13,7 +13,6 @@ import SwiftUI
 ///
 /// Uses a form with name and coordinate fields; shows an alert when validation fails. On valid submit, the view model resumes its continuation with the `Location` and the parent dismisses. On cancel or swipe-dismiss, the view model resumes with `nil`.
 ///
-/// - SeeAlso: `AddLocationViewModel`, `LocationListView`, `AppDependenciesProtocol`
 struct AddLocationView: View {
 
     // MARK: - Properties

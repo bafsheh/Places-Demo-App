@@ -13,7 +13,6 @@ import Foundation
 ///
 /// Implements `LocationRepositoryProtocol`; used by `FetchLocationsUseCase`. Each DTO is mapped via `toDomain()` (new UUID per location).
 ///
-/// - SeeAlso: `LocationRepositoryProtocol`, `RemoteDataSourceProtocol`, `Location`, `LocationDTO`
 final class LocationRepository: LocationRepositoryProtocol {
 
     private let remoteDataSource: RemoteDataSourceProtocol

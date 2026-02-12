@@ -14,7 +14,6 @@ import Foundation
 /// Implementations are responsible for loading location data and mapping to domain `Location` entities.
 /// Injected into `FetchLocationsUseCase` so tests can use a mock repository.
 ///
-/// - SeeAlso: `LocationRepository`, `FetchLocationsUseCase`, `Location`
 protocol LocationRepositoryProtocol: Sendable {
 
     /// Fetches all locations from the underlying source.

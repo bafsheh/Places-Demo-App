@@ -2,19 +2,14 @@
 //  LocationRepositoryTests.swift
 //  Places-Demo-AppTests
 //
-//  Purpose: Unit tests for LocationRepository (fetch from data source, DTO → domain mapping).
-//  Dependencies: @testable Places_Demo_App, LocationRepository, MockRemoteDataSource, LocationDTO, Location, NetworkError.
-//
 
 import Foundation
 import Testing
 @testable import Places_Demo_App
 
 @MainActor
-@Suite
+@Suite("LocationRepository fetch from data source and DTO to domain mapping")
 struct LocationRepositoryTests {
-
-    // MARK: - Fixtures
 
     private func makeDTOs() -> [LocationDTO] {
         let json = """
@@ -24,19 +19,14 @@ struct LocationRepositoryTests {
         return try! JSONDecoder().decode([LocationDTO].self, from: data)
     }
 
-    // MARK: - fetchLocations_success_mapsDTO
-
-    @Test
+    @Test("fetchLocations returns domain locations with correct mapping from DTOs")
     func fetchLocations_success_mapsDTO() async throws {
-        // Given: MockRemoteDataSource returns LocationDTO array
         let dtos = makeDTOs()
         let mockDataSource = MockRemoteDataSource(locationsToReturn: dtos)
         let repository = LocationRepository(remoteDataSource: mockDataSource)
 
-        // When: repository.fetchLocations() called
         let result = try await repository.fetchLocations()
 
-        // Then: Returns Location array (domain models); DTO → Domain mapping correct
         #expect(result.count == 3)
         let r0 = result[0], r1 = result[1], r2 = result[2]
         #expect(r0.name == "Amsterdam")
@@ -50,16 +40,11 @@ struct LocationRepositoryTests {
         #expect(abs(r2.coordinate.longitude - 5.0) < 0.001)
     }
 
-    // MARK: - fetchLocations_failure
-
-    @Test
+    @Test("fetchLocations throws when data source throws")
     func fetchLocations_failure() async {
-        // Given: MockRemoteDataSource throws NetworkError
         let mockDataSource = MockRemoteDataSource(errorToThrow: NetworkError.noData)
         let repository = LocationRepository(remoteDataSource: mockDataSource)
 
-        // When: repository.fetchLocations() called
-        // Then: Error propagated
         do {
             _ = try await repository.fetchLocations()
             #expect(Bool(false), "Expected throw")
@@ -72,18 +57,13 @@ struct LocationRepositoryTests {
         }
     }
 
-    // MARK: - fetchLocations_emptyArray
-
-    @Test
+    @Test("fetchLocations returns empty array when data source returns empty")
     func fetchLocations_emptyArray() async throws {
-        // Given: MockRemoteDataSource returns []
         let mockDataSource = MockRemoteDataSource(locationsToReturn: [])
         let repository = LocationRepository(remoteDataSource: mockDataSource)
 
-        // When: repository.fetchLocations() called
         let result = try await repository.fetchLocations()
 
-        // Then: Returns empty array; no error
         #expect(result.isEmpty)
     }
 }

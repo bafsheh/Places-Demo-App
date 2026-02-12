@@ -13,8 +13,6 @@ import Foundation
 ///
 /// Property names match the API (e.g. `lat`/`long`); use `toDomain()` to obtain a domain `Location` with a new UUID.
 /// Explicit nonisolated Codable for Swift 6 strict concurrency when used as actor return type.
-///
-/// - SeeAlso: `Location`, `LocationsResponse`, `RemoteDataSource`
 struct LocationDTO: Codable, Sendable {
 
     /// Optional display name from the API.
@@ -59,8 +57,6 @@ struct LocationDTO: Codable, Sendable {
 
 /// Top-level response shape for the locations API; contains an array of location DTOs.
 /// Explicit nonisolated Codable for Swift 6 strict concurrency when used as actor return type.
-///
-/// - SeeAlso: `LocationDTO`, `LocationsEndpoint`, `RemoteDataSource`
 struct LocationsResponse: Codable, Sendable {
 
     /// Array of location DTOs from the API.

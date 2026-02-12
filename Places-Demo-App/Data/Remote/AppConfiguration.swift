@@ -13,7 +13,6 @@ import Foundation
 ///
 /// Allows staging/production and feature toggles without code changes. Falls back to defaults when keys are missing. Used by `NetworkConfiguration.default` for the API base URL.
 ///
-/// - SeeAlso: `NetworkConfiguration`
 enum AppConfiguration: Sendable {
 
     private static let defaultBaseURL = "https://raw.githubusercontent.com"

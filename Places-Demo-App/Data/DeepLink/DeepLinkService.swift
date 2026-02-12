@@ -11,8 +11,6 @@ import Foundation
 import UIKit
 
 /// Errors that can occur when opening a deep link.
-///
-/// - SeeAlso: `DeepLinkService`, `WikipediaDeepLinkService`
 enum DeepLinkError: LocalizedError, Sendable {
 
     /// URL could not be constructed (e.g. invalid components).
@@ -37,8 +35,6 @@ enum DeepLinkError: LocalizedError, Sendable {
 }
 
 /// Protocol for opening URLs in the system (e.g. another app or browser); allows injection of a mock in tests.
-///
-/// - SeeAlso: `DefaultURLOpener`, `DeepLinkService`
 protocol URLOpening: Sendable {
 
     /// Attempts to open the given URL (e.g. via `UIApplication.shared.open`).
@@ -51,7 +47,6 @@ protocol URLOpening: Sendable {
 /// Default implementation that uses `UIApplication.shared` to open URLs.
 ///
 /// - Important: Must be used from the main actor; conforms to `URLOpening` for production. Tests inject a mock.
-/// - SeeAlso: `URLOpening`, `DeepLinkService`
 @MainActor
 final class DefaultURLOpener: URLOpening {
 
@@ -67,8 +62,6 @@ final class DefaultURLOpener: URLOpening {
 /// Contract for a generic deep link service that can open any URL.
 ///
 /// Used by Wikipedia-specific code to open `wikipedia://places?...`; other deep link types could use the same protocol.
-///
-/// - SeeAlso: `DeepLinkService`, `WikipediaDeepLinkService`
 protocol DeepLinkServiceProtocol: Sendable {
 
     /// Opens the given URL (e.g. Wikipedia Places, maps).
@@ -81,8 +74,6 @@ protocol DeepLinkServiceProtocol: Sendable {
 /// Generic deep link service that opens URLs via an injectable opener.
 ///
 /// Converts opener result to throws: if opener returns `false`, throws `DeepLinkError.appNotInstalled`. Used by `WikipediaDeepLinkService`.
-///
-/// - SeeAlso: `URLOpening`, `WikipediaDeepLinkService`, `DeepLinkError`
 @MainActor
 final class DeepLinkService: DeepLinkServiceProtocol {
 

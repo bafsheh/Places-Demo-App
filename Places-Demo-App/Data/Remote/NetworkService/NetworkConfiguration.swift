@@ -13,7 +13,6 @@ import Foundation
 ///
 /// Used by `NetworkService` and by endpoints when building `URLRequest`. The static `default` uses `AppConfiguration.apiBaseURL`.
 ///
-/// - SeeAlso: `AppConfiguration`, `NetworkService`, `EndpointProtocol`
 struct NetworkConfiguration: Sendable {
 
     /// Base URL for requests (e.g. `"https://api.example.com"`); no trailing slash.

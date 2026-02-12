@@ -4,15 +4,11 @@ iOS app demonstrating Wikipedia deep linking with Clean Architecture.
 
 ## Requirements
 
-- **iOS:** 17.0+ (current deployment target: 26.2 - update for production)
+- **iOS:** 17.0+ (deployment target)
 - **Xcode:** 15.0+
 - **Swift:** 6.0
 - **Concurrency:** Swift 6 strict concurrency enabled
 - **Wikipedia app** (for deep link; optional)
-
-> ⚠️ **Note:** Deployment target iOS 26.2 is set for development/testing.
-> For production release, update to iOS 17.0 or 18.0 in project settings:
-> **Project → Targets → Places-Demo-App → Deployment Info → iOS Deployment Target**
 
 ## Overview
 
@@ -123,27 +119,27 @@ xcodebuild test -scheme Places-Demo-App -destination 'platform=iOS Simulator,nam
 
 #### Test Structure
 
-Tests use dependency injection with mock objects:
+Tests use **TestDependencies** for consistent setup and dependency injection with mocks:
 
 ```swift
-// Example: Testing LocationListViewModel
-let mockFetchUseCase = MockFetchLocationsUseCase()
-let mockOpenUseCase = MockOpenWikipediaUseCase()
-
-let dependencies = Dependencies(
-    fetchLocationsUseCase: mockFetchUseCase,
-    openWikipediaUseCase: mockOpenUseCase
+// Example: Testing LocationListViewModel with TestDependencies
+let (deps, fetchMock, openMock) = TestDependencies.makeForLocationList(
+    locations: [sampleLocation1, sampleLocation2]
 )
 
-let viewModel = dependencies.makeLocationsListViewModel()
+let viewModel = deps.makeLocationsListViewModel()
 
-// Configure mock behavior
-mockFetchUseCase.executeReturnValue = [sampleLocation1, sampleLocation2]
-
-// Test
 await viewModel.loadLocations()
-XCTAssertEqual(viewModel.state, .loaded([sampleLocation1, sampleLocation2]))
+
+// Assert loaded state
+#expect(viewModel.state.content?.count == 2)
+// Or: guard case .loaded(let loaded) = viewModel.state else { return }; #expect(loaded.count == 2)
 ```
+
+- **`TestDependencies.make()`** — default mocks (success).
+- **`TestDependencies.makeForLocationList(locations:)`** — pre-configured for list tests; returns mocks for further customization.
+- **`TestDependencies.makeWithErrors(fetchError:openError:)`** — for failure scenarios.
+- **`SampleData.locations`** / **`SampleData.sampleLocation`** — shared sample data (see `Places-Demo-AppTests/Helpers/SampleData.swift`).
 
 #### Test Coverage
 

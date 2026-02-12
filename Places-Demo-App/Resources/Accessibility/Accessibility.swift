@@ -13,7 +13,6 @@ import Foundation
 ///
 /// Use with `.accessibilityIdentifier(AccessibilityID.xxx.rawValue)` so UI tests can find elements. For localized labels and hints use `LocalizationHelper.Accessibility` or the typealias `Accessibility`.
 ///
-/// - SeeAlso: `LocalizationHelper.Accessibility`, `Accessibility` (typealias)
 enum AccessibilityID: String {
 
     case addLocationForm

@@ -13,7 +13,6 @@ import Foundation
 ///
 /// Structure is grouped by screen/domain (Common, Places, AddLocation, Location, Accessibility) for discoverability and scalability. Extensions add nested enums (e.g. `LocalizationHelper.Places`).
 ///
-/// - SeeAlso: `LocalizationHelper+Places`, `LocalizationHelper+AddLocation`, `LocalizationHelper+Accessibility`
 enum LocalizationHelper {
 
     /// Strings shared across screens (loading, error, retry, accessibility hints).

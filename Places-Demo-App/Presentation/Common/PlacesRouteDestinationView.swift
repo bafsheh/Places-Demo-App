@@ -13,7 +13,6 @@ import SwiftUI
 ///
 /// Used as the `navigationDestination(for: PlacesRoute.self)` content in `RootView`. Add one case per push destination; use `// MARK: - Feature` to group as the app grows. Currently `.addLocation` is presented as a sheet, so push destination for it is `EmptyView()`.
 ///
-/// - SeeAlso: `PlacesRoute`, `RootView`, `LocationListView`
 struct PlacesRouteDestinationView: View {
 
     /// The route that was pushed; determines which view to show.

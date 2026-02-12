@@ -13,7 +13,6 @@ import Foundation
 ///
 /// Defines path, method, and URLRequest builder for the single locations resource. To add more remote entities, introduce a new DTO, response type, and endpoint (e.g. FavoritesEndpoint).
 ///
-/// - SeeAlso: `EndpointProtocol`, `LocationsResponse`, `RemoteDataSource`
 enum LocationsEndpoint: EndpointProtocol, Sendable {
 
     /// The locations list endpoint (e.g. JSON list of places).

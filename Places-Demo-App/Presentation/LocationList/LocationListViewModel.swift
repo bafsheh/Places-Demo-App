@@ -14,7 +14,6 @@ import Observation
 ///
 /// Owns the list of locations in memory after load; updates `state` for idle/loading/loaded/error. Used by `LocationListView`; created by `Dependencies.makeLocationsListViewModel`.
 ///
-/// - SeeAlso: `ViewState`, `FetchLocationsUseCaseProtocol`, `OpenWikipediaUseCaseProtocol`, `LocationListView`
 @MainActor
 @Observable
 final class LocationListViewModel {
@@ -49,7 +48,7 @@ final class LocationListViewModel {
 
     /// Loads locations from the repository and updates `state` to loading then loaded or error.
     ///
-    /// Call on appear and from retry button; errors are surfaced as `state = .error(message)`.
+    /// Call on appear and from retry button; errors are surfaced as `state = .error(error:message:)`.
     func loadLocations() async {
         state = .loading
 
@@ -57,7 +56,8 @@ final class LocationListViewModel {
             locationList = try await fetchLocationsUseCase.execute()
             state = .loaded(locationList)
         } catch {
-            state = .error(error.localizedDescription)
+            await Logger.shared.log(error: error, context: "LocationListViewModel.loadLocations")
+            state = .error(error: error, message: error.localizedDescription)
         }
     }
 
@@ -76,7 +76,8 @@ final class LocationListViewModel {
         do {
             try await openWikipediaUseCase.execute(location: location)
         } catch {
-            state = .error(error.localizedDescription)
+            await Logger.shared.log(error: error, context: "LocationListViewModel.openLocation")
+            state = .error(error: error, message: error.localizedDescription)
         }
     }
 }

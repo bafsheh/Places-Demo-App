@@ -13,7 +13,6 @@ import SwiftUI
 ///
 /// Use for any loading state (e.g. `LoadingView()` or `LoadingView(message: "Loading locations...")`). Uses `AccessibilityID.loadingView` for UI tests.
 ///
-/// - SeeAlso: `ViewState`, `LocationListView`
 struct LoadingView: View {
 
     /// Message shown below the progress indicator; defaults to `LocalizationHelper.Common.loading`.

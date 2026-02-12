@@ -13,7 +13,6 @@ import SwiftUI
 ///
 /// Tapping the row is handled by the parent (e.g. open in Wikipedia). Uses `AccessibilityID.locationRow(id:)` for UI tests.
 ///
-/// - SeeAlso: `LocationListView`, `Location`, `AccessibilityID`
 struct LocationRow: View {
 
     /// The location to display (name, coordinates).

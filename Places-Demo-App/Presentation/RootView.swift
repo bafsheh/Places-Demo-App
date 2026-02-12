@@ -13,7 +13,6 @@ import SwiftUI
 ///
 /// Holds the single `Router<PlacesRoute>` and uses `AppDependenciesProtocol` to create the root list view and navigation destinations. In tests, pass a dependencies value built in the test target (e.g. `TestDependencies.make()`).
 ///
-/// - SeeAlso: `Router`, `PlacesRoute`, `AppDependenciesProtocol`, `DependencyContainer`
 struct RootView: View {
 
     @State private var router = Router<PlacesRoute>()

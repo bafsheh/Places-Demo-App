@@ -14,7 +14,6 @@ import Observation
 ///
 /// Validates that lat/long parse to doubles in valid ranges (-90...90, -180...180). On valid submit resumes the continuation with the `Location`; on cancel or dismiss resumes with `nil`. Sets `showError` for invalid input to drive the alert.
 ///
-/// - SeeAlso: `AddLocationView`, `Location`, `AppDependenciesProtocol`
 @MainActor
 @Observable
 final class AddLocationViewModel {

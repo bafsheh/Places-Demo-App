@@ -13,7 +13,6 @@ import SwiftUI
 ///
 /// Uses `RootView()` which in turn uses `DependencyContainer.live` for production dependencies. The root content is the locations list inside a NavigationStack. Marked with `@main` so the system launches this type as the app.
 ///
-/// - SeeAlso: `RootView`, `DependencyContainer`, `LocationListView`
 @main
 struct Places_Demo_AppApp: App {
 
