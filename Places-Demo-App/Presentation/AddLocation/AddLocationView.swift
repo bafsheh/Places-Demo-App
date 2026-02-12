@@ -14,33 +14,33 @@ struct AddLocationView: View {
         NavigationStack {
             Form {
                 Section {
-                    TextField("Location name", text: $viewModel.name)
+                    TextField(LocalizedStrings.AddLocation.namePlaceholder, text: $viewModel.name)
                         .textContentType(.name)
                 } header: {
-                    Text("Name")
+                    Text(LocalizedStrings.AddLocation.sectionName)
                 }
 
                 Section {
-                    TextField("Latitude", text: $viewModel.latitude)
+                    TextField(LocalizedStrings.AddLocation.textFieldLatitude, text: $viewModel.latitude)
                         .keyboardType(.decimalPad)
-                    TextField("Longitude", text: $viewModel.longitude)
+                    TextField(LocalizedStrings.AddLocation.textFieldLongitude, text: $viewModel.longitude)
                         .keyboardType(.decimalPad)
                 } header: {
-                    Text("Coordinates")
+                    Text(LocalizedStrings.AddLocation.sectionCoordinates)
                 } footer: {
-                    Text("Latitude -90 to 90, Longitude -180 to 180")
+                    Text(LocalizedStrings.AddLocation.latLongFooter)
                 }
             }
-            .navigationTitle("Custom Location")
+            .navigationTitle(LocalizedStrings.AddLocation.title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
+                    Button(LocalizedStrings.AddLocation.cancel) {
                         dismiss()
                     }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Add") {
+                    Button(LocalizedStrings.AddLocation.add) {
                         viewModel.submit()
                         
                         if viewModel.showError == false {
@@ -49,12 +49,12 @@ struct AddLocationView: View {
                     }
                 }
             }
-            .alert("Invalid coordinates", isPresented: $viewModel.showError) {
-                Button("OK") {
+            .alert(LocalizedStrings.AddLocation.alertInvalidTitle, isPresented: $viewModel.showError) {
+                Button(LocalizedStrings.AddLocation.alertOk) {
                     viewModel.showError = false
                 }
             } message: {
-                Text("Please enter valid latitude (-90 to 90) and longitude (-180 to 180).")
+                Text(LocalizedStrings.AddLocation.alertInvalidMessage)
             }
         }
         .presentationDetents([.medium])

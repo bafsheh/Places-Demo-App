@@ -10,7 +10,7 @@ struct LocationRow: View {
             iconView
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(location.displayName)
+                Text(location.name ?? LocalizedStrings.Location.unnamedLocation)
                     .font(.headline)
                     .foregroundStyle(.primary)
 
@@ -27,8 +27,8 @@ struct LocationRow: View {
         }
         .padding(.vertical, 8)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(location.displayName), \(location.formattedCoordinates)")
-        .accessibilityHint("Opens in Wikipedia")
+        .accessibilityLabel("\(location.name ?? LocalizedStrings.Location.unnamedLocation), \(location.formattedCoordinates)")
+        .accessibilityHint(LocalizedStrings.Accessibility.opensInWikipedia)
     }
 
     private var iconView: some View {

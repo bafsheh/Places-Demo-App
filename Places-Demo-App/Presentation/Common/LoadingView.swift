@@ -3,7 +3,7 @@ import SwiftUI
 /// Reusable loading view with optional message. Use for any loading state (e.g. `LoadingView()` or `LoadingView(message: "Loading locations...")`).
 struct LoadingView: View {
 
-    var message: String = "Loading"
+    var message: String = LocalizedStrings.Common.loading
 
     var body: some View {
         VStack(spacing: 16) {

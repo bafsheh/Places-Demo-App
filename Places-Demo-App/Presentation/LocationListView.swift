@@ -17,7 +17,7 @@ struct LocationListView: View {
         ZStack {
             switch viewModel.state {
             case .idle, .loading:
-                LoadingView(message: "Loading locations...")
+                LoadingView(message: LocalizedStrings.Places.loadingLocations)
             case .loaded(let locations):
                 locationsList(locations + viewModel.addedLocations)
             case .error(let message):
@@ -28,13 +28,13 @@ struct LocationListView: View {
                 }
             }
         }
-        .navigationTitle("Places")
+        .navigationTitle(LocalizedStrings.Places.title)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button {
                     router.present(.addLocation)
                 } label: {
-                    Label("Add", systemImage: "plus.circle.fill")
+                    Label(LocalizedStrings.Places.add, systemImage: "plus.circle.fill")
                 }
             }
         }
