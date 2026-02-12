@@ -624,24 +624,6 @@ final class WikipediaDeepLinkAdapter: OpenWikipediaAtLocationPort {
 
 ---
 
-## ✅ Assignment Requirements
-
-All assignment requirements have been met and exceeded:
-
-| Requirement | Status | Implementation |
-|-------------|--------|----------------|
-| SwiftUI interface | ✅ Complete | 100% SwiftUI, no UIKit |
-| Location list | ✅ Complete | Scrollable list with names & coordinates |
-| Fetch from API | ✅ Complete | NetworkService with error handling |
-| Wikipedia deep link | ✅ Complete | Custom URL scheme integration |
-| Custom location entry | ✅ Complete | Validation & error feedback |
-| README documentation | ✅ Complete | Comprehensive guide with diagrams |
-| Unit tests | ✅ Complete | >70% coverage, 69 tests |
-| **Bonus: Concurrency** | ✅ Complete | Swift 6 async/await, Actor, @MainActor |
-| **Bonus: Accessibility** | ✅ Complete | VoiceOver, Dynamic Type, identifiers |
-
----
-
 ## 🐛 Known Issues & Future Work
 
 ### Known Issues
@@ -686,70 +668,7 @@ All assignment requirements have been met and exceeded:
 
 ---
 
-## 🤝 Contributing
-
-This is an assignment project, but feedback and suggestions are welcome!
-
-### How to Contribute
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-### Code Standards
-
-- ✅ Follow Swift API Design Guidelines
-- ✅ Maintain >70% test coverage
-- ✅ Use SwiftLint for style consistency
-- ✅ Add accessibility support
-- ✅ Update documentation
-
----
-
-## 📄 License
-
-This project was created for the ABN AMRO iOS Assignment.
-
-```
-MIT License
-
-Copyright (c) 2024 [Your Name]
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction...
-```
-
----
-
-## 👤 Author
-
 <div align="center">
-
-**Your Name**
-
-[![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/your-username)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/your-profile)
-[![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:your.email@example.com)
-
-</div>
-
----
-
-## 🙏 Acknowledgments
-
-- **ABN AMRO** - For the comprehensive iOS assignment
-- **Wikipedia iOS Team** - For the deep linking capability
-- **Swift Community** - For excellent documentation and support
-- **Clean Architecture** - Uncle Bob Martin's architecture principles
-
----
-
-<div align="center">
-
-### ⭐ If you found this project helpful, please consider giving it a star!
 
 **Built with ❤️ using Swift 6 and SwiftUI**
 
