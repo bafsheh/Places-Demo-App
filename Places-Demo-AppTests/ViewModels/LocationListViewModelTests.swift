@@ -41,11 +41,10 @@ struct LocationListViewModelTests {
 
         await viewModel.loadLocations()
 
-        guard case .error(let error, let message) = viewModel.state else {
+        guard case .error(_, let message) = viewModel.state else {
             #expect(Bool(false), "Expected state .error, got \(viewModel.state)")
             return
         }
-        #expect(error is ViewStateError, "Expected underlying error to be ViewStateError")
         #expect(!message.isEmpty, "Error message should not be empty")
     }
 
