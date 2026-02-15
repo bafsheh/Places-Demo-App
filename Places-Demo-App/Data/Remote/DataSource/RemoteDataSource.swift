@@ -3,7 +3,7 @@
 //  Places-Demo-App
 //
 //  Purpose: Fetches locations from the remote API via NetworkService; returns DTOs.
-//  Dependencies: NetworkServiceProtocol, NetworkConfiguration, LocationsEndpoint, LocationDTO.
+//  Dependencies: NetworkServiceProtocol, LocationsEndpoint, LocationDTO.
 //  Usage: Injected into LocationRepository; used only in DependencyContainer.
 //
 
@@ -16,19 +16,12 @@ import Foundation
 final class RemoteDataSource: RemoteDataSourceProtocol {
 
     private let networkService: NetworkServiceProtocol
-    private let configuration: NetworkConfiguration
 
-    /// Creates a remote data source with the given network service and configuration.
+    /// Creates a remote data source with the given network service.
     ///
-    /// - Parameters:
-    ///   - networkService: Service used to perform the HTTP request and decode JSON.
-    ///   - configuration: Used by the endpoint to build the URLRequest (base URL, headers, timeout).
-    init(
-        networkService: NetworkServiceProtocol,
-        configuration: NetworkConfiguration
-    ) {
+    /// - Parameter networkService: Service used to perform the HTTP request and decode JSON.
+    init(networkService: NetworkServiceProtocol) {
         self.networkService = networkService
-        self.configuration = configuration
     }
 
     /// Fetches locations from the remote API.

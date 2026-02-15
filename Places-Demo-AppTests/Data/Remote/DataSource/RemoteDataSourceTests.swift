@@ -19,8 +19,7 @@ struct RemoteDataSourceTests {
         let data = json.data(using: .utf8)!
         let response = try JSONDecoder().decode(LocationsResponse.self, from: data)
         let mockNetwork = MockNetworkService(locationsResponse: response)
-        let config = NetworkConfiguration(baseURL: "https://test.com")
-        let dataSource = RemoteDataSource(networkService: mockNetwork, configuration: config)
+        let dataSource = RemoteDataSource(networkService: mockNetwork)
 
         let result = try await dataSource.fetchLocations()
 
@@ -33,8 +32,7 @@ struct RemoteDataSourceTests {
     @Test("fetchLocations throws when network service throws")
     func fetchLocations_failure() async {
         let mockNetwork = MockNetworkService(errorToThrow: NetworkError.noData)
-        let config = NetworkConfiguration(baseURL: "https://test.com")
-        let dataSource = RemoteDataSource(networkService: mockNetwork, configuration: config)
+        let dataSource = RemoteDataSource(networkService: mockNetwork)
 
         do {
             _ = try await dataSource.fetchLocations()

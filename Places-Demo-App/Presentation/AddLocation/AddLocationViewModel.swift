@@ -47,13 +47,16 @@ final class AddLocationViewModel {
     // MARK: - Public Methods
 
     /// Validates lat/long; if valid, creates a `Location` (with domain `Coordinate`), resumes the continuation with it, and clears it; otherwise sets `showError = true`.
-    func submit() {
+    ///
+    /// - Returns: `true` if validation passed and the location was submitted; `false` if validation failed.
+    @discardableResult
+    func submit() -> Bool {
         guard let lat = Double(latitude),
               let lon = Double(longitude),
-              lat >= -90, lat <= 90,
-              lon >= -180, lon <= 180 else {
+              Coordinate.latitudeRange.contains(lat),
+              Coordinate.longitudeRange.contains(lon) else {
             showError = true
-            return
+            return false
         }
         let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
         let location = Location(
@@ -62,6 +65,7 @@ final class AddLocationViewModel {
             longitude: lon
         )
         resume(returning: location)
+        return true
     }
 
     /// Resumes the continuation with `nil` (e.g. user cancelled or dismissed). No-op if already resumed.

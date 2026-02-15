@@ -114,7 +114,7 @@ struct LocationListView: View {
             }
         }
         .listStyle(.insetGrouped)
-        .accessibilityElement(children: .combine)
+        .accessibilityElement(children: .contain)
         .accessibilityLabel(Accessibility.Places.listLabel)
         .accessibilityIdentifier(AccessibilityID.placesList.rawValue)
     }

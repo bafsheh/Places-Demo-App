@@ -78,8 +78,7 @@ struct AddLocationView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button(LocalizationHelper.AddLocation.add) {
-                        viewModel.submit()
-                        if viewModel.showError == false {
+                        if viewModel.submit() {
                             dismiss()
                         }
                     }

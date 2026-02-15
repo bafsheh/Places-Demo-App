@@ -43,7 +43,12 @@ actor NetworkService: NetworkServiceProtocol {
     func request<T: Decodable & Sendable>(_ endpoint: EndpointProtocol) async throws -> T {
         let request = try await endpoint.urlRequest(with: configuration)
 
-        let (data, response) = try await session.data(for: request)
+        let (data, response): (Data, URLResponse)
+        do {
+            (data, response) = try await session.data(for: request)
+        } catch {
+            throw NetworkError.networkFailure(error.localizedDescription)
+        }
 
         guard let httpResponse = response as? HTTPURLResponse else {
             throw NetworkError.unknown

@@ -21,5 +21,7 @@ enum LocalizationHelper {
         static var error: String { String(localized: "common.error") }
         static var retry: String { String(localized: "common.retry") }
         static var accessibilityRetryHint: String { String(localized: "common.accessibilityRetryHint") }
+        static var networkError: String { String(localized: "common.networkError") }
+        static var genericError: String { String(localized: "common.genericError") }
     }
 }

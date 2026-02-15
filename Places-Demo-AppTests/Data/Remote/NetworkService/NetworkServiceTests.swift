@@ -116,6 +116,32 @@ struct NetworkServiceTests {
         }
     }
 
+    @Test("request throws networkFailure when URLSession transport fails")
+    func request_transportError() async {
+        let baseURL = "https://transport.test"
+        registerMock(
+            baseURL: baseURL,
+            response: nil,
+            data: nil,
+            error: URLError(.notConnectedToInternet)
+        )
+        defer { MockURLProtocol.mockResultsByURL.removeValue(forKey: baseURL + path) }
+        let config = NetworkConfiguration(baseURL: baseURL)
+        let service = NetworkService(session: makeSession(), configuration: config)
+        let endpoint = LocationsEndpoint.locations
+
+        do {
+            let _: LocationsResponse = try await service.request(endpoint)
+            #expect(Bool(false), "Expected throw")
+        } catch let error as NetworkError {
+            if case .networkFailure = error { } else {
+                #expect(Bool(false), "Expected networkFailure, got \(error)")
+            }
+        } catch {
+            #expect(Bool(false), "Expected NetworkError, got \(error)")
+        }
+    }
+
     @Test("request throws unknown when response is not HTTPURLResponse")
     func request_unknown() async {
         let baseURL = "https://unknown.test"

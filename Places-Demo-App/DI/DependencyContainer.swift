@@ -78,8 +78,7 @@ enum DependencyContainer {
         configuration: networkConfiguration
     )
     private static let remoteDataSource: RemoteDataSourceProtocol = RemoteDataSource(
-        networkService: networkService,
-        configuration: networkConfiguration
+        networkService: networkService
     )
 
     // MARK: - Domain (use cases)

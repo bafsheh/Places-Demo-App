@@ -12,7 +12,9 @@ import Foundation
 /// Data transfer object for a single location as returned by the locations API.
 ///
 /// Property names match the API (e.g. `lat`/`long`); use `toDomain()` to obtain a domain `Location` with a new UUID.
-/// Explicit nonisolated Codable for Swift 6 strict concurrency when used as actor return type.
+/// Explicit `nonisolated` Codable is required because the project uses `default-isolation=MainActor`,
+/// which makes compiler-synthesized conformances main-actor-isolated and incompatible with the
+/// `Sendable` constraint on `NetworkServiceProtocol.request`.
 struct LocationDTO: Codable, Sendable {
 
     /// Optional display name from the API.
@@ -56,7 +58,8 @@ struct LocationDTO: Codable, Sendable {
 }
 
 /// Top-level response shape for the locations API; contains an array of location DTOs.
-/// Explicit nonisolated Codable for Swift 6 strict concurrency when used as actor return type.
+///
+/// Explicit `nonisolated` Codable required due to project-wide `default-isolation=MainActor`.
 struct LocationsResponse: Codable, Sendable {
 
     /// Array of location DTOs from the API.

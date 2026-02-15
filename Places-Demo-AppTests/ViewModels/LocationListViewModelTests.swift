@@ -46,10 +46,7 @@ struct LocationListViewModelTests {
             return
         }
         #expect(error is NetworkError, "Expected underlying error to be NetworkError")
-        #expect(
-            message.contains("noData") || message.lowercased().contains("no data") || message.contains("No data"),
-            "Error message should contain noData or localized description, got: \(message)"
-        )
+        #expect(!message.isEmpty, "Error message should not be empty")
     }
 
     @Test("loadLocations transitions state from idle through loading to loaded")

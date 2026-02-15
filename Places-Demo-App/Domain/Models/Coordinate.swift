@@ -15,6 +15,12 @@ import Foundation
 /// Use this in all domain entities instead of CLLocationCoordinate2D.
 struct Coordinate: Equatable, Sendable {
 
+    /// Valid latitude range in degrees.
+    static let latitudeRange = -90.0...90.0
+
+    /// Valid longitude range in degrees.
+    static let longitudeRange = -180.0...180.0
+
     /// Latitude in degrees (-90 to 90)
     let latitude: Double
 
@@ -28,7 +34,7 @@ struct Coordinate: Equatable, Sendable {
     ///   - longitude: Longitude in degrees
     /// - Note: Values outside valid ranges will be clamped
     init(latitude: Double, longitude: Double) {
-        self.latitude = max(-90, min(90, latitude))
-        self.longitude = max(-180, min(180, longitude))
+        self.latitude = min(max(Self.latitudeRange.lowerBound, latitude), Self.latitudeRange.upperBound)
+        self.longitude = min(max(Self.longitudeRange.lowerBound, longitude), Self.longitudeRange.upperBound)
     }
 }

@@ -26,8 +26,14 @@ final class LocationListViewModel {
     private let fetchLocationsUseCase: FetchLocationsUseCaseProtocol
     private let openWikipediaUseCase: OpenWikipediaUseCaseProtocol
 
-    /// In-memory list of locations (fetched + user-added); backing for `state == .loaded(...)`.
+    /// In-memory list of all locations (fetched + user-added); backing for `state == .loaded(...)`.
     private var locationList: [Location] = []
+
+    /// Locations added by the user that should survive reloads from the API.
+    private var userAddedLocations: [Location] = []
+
+    /// Current load task; cancelled when a new load starts to prevent stale results.
+    private var loadTask: Task<Void, Never>?
 
     // MARK: - Lifecycle
 
@@ -48,25 +54,52 @@ final class LocationListViewModel {
 
     /// Loads locations from the repository and updates `state` to loading then loaded or error.
     ///
+    /// Cancels any in-flight load before starting a new one. `CancellationError` is silently ignored
+    /// so that a cancelled load does not flash an error to the user.
     /// Call on appear and from retry button; errors are surfaced as `state = .error(error:message:)`.
     func loadLocations() async {
+        loadTask?.cancel()
         state = .loading
 
-        do {
-            locationList = try await fetchLocationsUseCase.execute()
-            state = .loaded(locationList)
-        } catch {
-            await Logger.shared.log(error: error, context: "LocationListViewModel.loadLocations")
-            state = .error(error: error, message: error.localizedDescription)
+        let task = Task {
+            do {
+                let locations = try await fetchLocationsUseCase.execute()
+                guard !Task.isCancelled else { return }
+                locationList = locations + userAddedLocations
+                state = .loaded(locationList)
+            } catch is CancellationError {
+                // Silently ignore — another load replaced this one.
+            } catch {
+                guard !Task.isCancelled else { return }
+                await Logger.shared.log(error: error, context: "LocationListViewModel.loadLocations")
+                state = .error(error: error, message: Self.userFacingMessage(for: error))
+            }
         }
+        loadTask = task
+        await task.value
+        if loadTask == task { loadTask = nil }
     }
 
     /// Appends a user-added location to the list and updates `state` to loaded with the new list.
     ///
     /// - Parameter location: The location to add (e.g. from the add-location sheet).
     func addLocation(_ location: Location) {
+        userAddedLocations.append(location)
         locationList.append(location)
         state = .loaded(locationList)
+    }
+
+    // MARK: - Private
+
+    private static func userFacingMessage(for error: Error) -> String {
+        switch error {
+        case is NetworkError:
+            return LocalizationHelper.Common.networkError
+        case is OpenWikipediaError:
+            return error.localizedDescription
+        default:
+            return LocalizationHelper.Common.genericError
+        }
     }
 
     /// Opens Wikipedia at the given location; on failure updates `state` to error.
@@ -77,7 +110,7 @@ final class LocationListViewModel {
             try await openWikipediaUseCase.execute(location: location)
         } catch {
             await Logger.shared.log(error: error, context: "LocationListViewModel.openLocation")
-            state = .error(error: error, message: error.localizedDescription)
+            state = .error(error: error, message: Self.userFacingMessage(for: error))
         }
     }
 }
