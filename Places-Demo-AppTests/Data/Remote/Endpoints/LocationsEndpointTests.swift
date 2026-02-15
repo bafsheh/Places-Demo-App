@@ -7,7 +7,6 @@ import Foundation
 import Testing
 @testable import Places_Demo_App
 
-@MainActor
 @Suite("LocationsEndpoint path, method and urlRequest")
 struct LocationsEndpointTests {
 

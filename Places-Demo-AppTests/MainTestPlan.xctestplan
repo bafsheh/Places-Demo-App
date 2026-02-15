@@ -1,0 +1,25 @@
+{
+  "configurations": [
+    {
+      "id": "9F99C2A0-0009-449F-97ED-F6755607EAB8",
+      "name": "Configuration 1",
+      "options": {}
+    }
+  ],
+  "defaultOptions": {
+    "testTimeoutsEnabled": true
+  },
+  "testTargets": [
+    {
+      "target": {
+        "containerPath": "container:Places-Demo-App.xcodeproj",
+        "identifier": "EFA236162F3B397700013193",
+        "name": "Places-Demo-AppTests"
+      },
+      "options": {
+        "runInParallel": true
+      }
+    }
+  ],
+  "version": 1
+}

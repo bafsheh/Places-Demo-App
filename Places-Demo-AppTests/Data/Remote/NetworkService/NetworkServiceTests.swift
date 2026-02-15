@@ -7,7 +7,6 @@ import Foundation
 import Testing
 @testable import Places_Demo_App
 
-@MainActor
 @Suite("NetworkService request success and failure modes")
 struct NetworkServiceTests {
 
@@ -21,7 +20,7 @@ struct NetworkServiceTests {
 
     private func registerMock(baseURL: String, response: URLResponse?, data: Data?, error: Error?) {
         let key = baseURL + path
-        MockURLProtocol.mockResultsByURL[key] = MockURLProtocol.MockResult(response: response, data: data, error: error)
+        MockURLProtocol.setResult(MockURLProtocol.MockResult(response: response, data: data, error: error), forKey: key)
     }
 
     @Test("request returns decoded value when response is 2xx and valid JSON")
@@ -41,7 +40,7 @@ struct NetworkServiceTests {
             data: json.data(using: .utf8),
             error: nil
         )
-        defer { MockURLProtocol.mockResultsByURL.removeValue(forKey: baseURL + path) }
+        defer { MockURLProtocol.removeResult(forKey: baseURL + path) }
         let config = NetworkConfiguration(baseURL: baseURL)
         let service = NetworkService(session: makeSession(), configuration: config)
         let endpoint = LocationsEndpoint.locations
@@ -66,7 +65,7 @@ struct NetworkServiceTests {
             data: Data(),
             error: nil
         )
-        defer { MockURLProtocol.mockResultsByURL.removeValue(forKey: baseURL + path) }
+        defer { MockURLProtocol.removeResult(forKey: baseURL + path) }
         let config = NetworkConfiguration(baseURL: baseURL)
         let service = NetworkService(session: makeSession(), configuration: config)
         let endpoint = LocationsEndpoint.locations
@@ -99,7 +98,7 @@ struct NetworkServiceTests {
             data: "not json".data(using: .utf8),
             error: nil
         )
-        defer { MockURLProtocol.mockResultsByURL.removeValue(forKey: baseURL + path) }
+        defer { MockURLProtocol.removeResult(forKey: baseURL + path) }
         let config = NetworkConfiguration(baseURL: baseURL)
         let service = NetworkService(session: makeSession(), configuration: config)
         let endpoint = LocationsEndpoint.locations
@@ -125,7 +124,7 @@ struct NetworkServiceTests {
             data: nil,
             error: URLError(.notConnectedToInternet)
         )
-        defer { MockURLProtocol.mockResultsByURL.removeValue(forKey: baseURL + path) }
+        defer { MockURLProtocol.removeResult(forKey: baseURL + path) }
         let config = NetworkConfiguration(baseURL: baseURL)
         let service = NetworkService(session: makeSession(), configuration: config)
         let endpoint = LocationsEndpoint.locations
@@ -156,7 +155,7 @@ struct NetworkServiceTests {
             data: Data(),
             error: nil
         )
-        defer { MockURLProtocol.mockResultsByURL.removeValue(forKey: baseURL + path) }
+        defer { MockURLProtocol.removeResult(forKey: baseURL + path) }
         let config = NetworkConfiguration(baseURL: baseURL)
         let service = NetworkService(session: makeSession(), configuration: config)
         let endpoint = LocationsEndpoint.locations

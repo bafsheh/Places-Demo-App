@@ -6,7 +6,6 @@
 import Testing
 @testable import Places_Demo_App
 
-@MainActor
 @Suite("Coordinate init clamping and Equatable")
 struct CoordinateTests {
 

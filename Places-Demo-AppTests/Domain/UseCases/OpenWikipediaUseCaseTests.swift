@@ -6,7 +6,6 @@
 import Testing
 @testable import Places_Demo_App
 
-@MainActor
 @Suite("OpenWikipediaUseCase execute via port adapter")
 struct OpenWikipediaUseCaseTests {
 

@@ -7,7 +7,6 @@ import Foundation
 import Testing
 @testable import Places_Demo_App
 
-@MainActor
 @Suite("DeepLinkService and DeepLinkError")
 struct DeepLinkServiceTests {
 

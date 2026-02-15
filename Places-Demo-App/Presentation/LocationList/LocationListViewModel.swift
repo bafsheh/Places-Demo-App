@@ -60,7 +60,7 @@ final class LocationListViewModel {
     func loadLocations() async {
         loadTask?.cancel()
 
-        let task = Task {
+        let task = Task { @MainActor in
             state = .loading
             do {
                 let list = try await fetchLocationsUseCase.execute()
@@ -72,7 +72,7 @@ final class LocationListViewModel {
                 // Ignore; another load was started.
             } catch {
                 guard !Task.isCancelled else { return }
-                state = .error(error: error, message: Self.userFacingMessage(for: error))
+                state = .error(error: ViewStateError(describing: error), message: Self.userFacingMessage(for: error))
             }
         }
 

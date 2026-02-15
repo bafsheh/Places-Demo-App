@@ -3,6 +3,7 @@
 //  Places-Demo-AppTests
 //
 
+import Foundation
 import Testing
 @testable import Places_Demo_App
 
@@ -16,7 +17,7 @@ struct ViewStateTests {
         #expect(ViewState<[Location]>.loading.isLoading == true)
         let loc = Location(name: "A", latitude: 0, longitude: 0)
         #expect(ViewState.loaded([loc]).isLoading == false)
-        #expect(ViewState<[Location]>.error(error: NetworkError.noData, message: "err").isLoading == false)
+        #expect(ViewState<[Location]>.error(error: ViewStateError(describing: NetworkError.noData), message: "err").isLoading == false)
     }
 
     @Test("content returns value only for loaded case")
@@ -24,25 +25,23 @@ struct ViewStateTests {
         let loc = Location(name: "X", latitude: 1, longitude: 2)
         #expect(ViewState<[Location]>.idle.content == nil)
         #expect(ViewState.loaded([loc]).content?.count == 1)
-        #expect(ViewState<[Location]>.error(error: NetworkError.noData, message: "m").content == nil)
+        #expect(ViewState<[Location]>.error(error: ViewStateError(describing: NetworkError.noData), message: "m").content == nil)
     }
 
     @Test("errorMessage returns message only for error case")
     func errorMessage() {
         #expect(ViewState<[Location]>.idle.errorMessage == nil)
-        #expect(ViewState<[Location]>.error(error: NetworkError.noData, message: "No data").errorMessage == "No data")
+        #expect(ViewState<[Location]>.error(error: ViewStateError(describing: NetworkError.noData), message: "No data").errorMessage == "No data")
     }
 
-    @Test("underlyingError returns error only for error case")
+    @Test("underlyingError returns ViewStateError only for error case")
     func underlyingError() {
         #expect(ViewState<[Location]>.idle.underlyingError == nil)
         let err = NetworkError.noData
-        let state = ViewState<[Location]>.error(error: err, message: "msg")
-        if case .noData = state.underlyingError as? NetworkError {
-            #expect(true)
-        } else {
-            #expect(Bool(false), "Expected underlyingError to be NetworkError.noData")
-        }
+        let state = ViewState<[Location]>.error(error: ViewStateError(describing: err), message: "msg")
+        let underlying = state.underlyingError
+        #expect(underlying != nil)
+        #expect(underlying?.errorDescription == err.localizedDescription)
     }
 
     @Test("Equatable same cases are equal")
@@ -51,7 +50,8 @@ struct ViewStateTests {
         #expect(ViewState<[Location]>.idle == .idle)
         #expect(ViewState<[Location]>.loading == .loading)
         #expect(ViewState.loaded([loc]) == ViewState.loaded([loc]))
-        #expect(ViewState<[Location]>.error(error: NetworkError.noData, message: "m") == ViewState<[Location]>.error(error: NetworkError.noData, message: "m"))
+        let err = ViewStateError(describing: NetworkError.noData)
+        #expect(ViewState<[Location]>.error(error: err, message: "m") == ViewState<[Location]>.error(error: err, message: "m"))
     }
 
     @Test("Equatable different cases are not equal")

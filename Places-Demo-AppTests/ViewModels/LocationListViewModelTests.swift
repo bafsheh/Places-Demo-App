@@ -45,7 +45,7 @@ struct LocationListViewModelTests {
             #expect(Bool(false), "Expected state .error, got \(viewModel.state)")
             return
         }
-        #expect(error is NetworkError, "Expected underlying error to be NetworkError")
+        #expect(error is ViewStateError, "Expected underlying error to be ViewStateError")
         #expect(!message.isEmpty, "Error message should not be empty")
     }
 

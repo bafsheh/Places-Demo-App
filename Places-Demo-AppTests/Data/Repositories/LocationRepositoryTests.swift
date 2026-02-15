@@ -7,7 +7,6 @@ import Foundation
 import Testing
 @testable import Places_Demo_App
 
-@MainActor
 @Suite("LocationRepository fetch from data source and DTO to domain mapping")
 struct LocationRepositoryTests {
 

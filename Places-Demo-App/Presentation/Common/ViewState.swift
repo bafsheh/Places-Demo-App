@@ -9,10 +9,19 @@
 
 import Foundation
 
+/// Sendable error wrapper for `ViewState.error`; holds the underlying error's description for display/logging.
+/// Allows `ViewState` to conform to `Sendable` without holding a non-Sendable `Error` across isolation boundaries.
+struct ViewStateError: Error, Sendable, Equatable {
+    let errorDescription: String
+    init(describing error: Error) {
+        self.errorDescription = error.localizedDescription
+    }
+}
+
 /// Represents the state of a view's data fetching or operation
 ///
 /// Generic over Content type to support different data models.
-/// Error case includes both typed Error and user-facing message.
+/// Error case uses `ViewStateError` (Sendable) so the enum remains Sendable.
 enum ViewState<Content: Equatable & Sendable>: Sendable {
 
     /// Initial state before any operation
@@ -27,9 +36,9 @@ enum ViewState<Content: Equatable & Sendable>: Sendable {
     /// Operation failed with error
     ///
     /// - Parameters:
-    ///   - error: The underlying error (for logging/analytics)
+    ///   - error: Sendable wrapper holding the underlying error's description (for display/logging).
     ///   - message: User-facing error message (localized)
-    case error(error: Error, message: String)
+    case error(error: ViewStateError, message: String)
 
     /// Convenience: Check if currently loading
     var isLoading: Bool {
@@ -49,8 +58,8 @@ enum ViewState<Content: Equatable & Sendable>: Sendable {
         return nil
     }
 
-    /// Convenience: Get underlying error if in error state
-    var underlyingError: Error? {
+    /// Convenience: Get underlying error (ViewStateError) if in error state
+    var underlyingError: ViewStateError? {
         if case .error(let error, _) = self { return error }
         return nil
     }
@@ -65,9 +74,8 @@ extension ViewState: Equatable {
             return true
         case (.loaded(let lhsContent), .loaded(let rhsContent)):
             return lhsContent == rhsContent
-        case (.error(_, let lhsMessage), .error(_, let rhsMessage)):
-            // Compare messages only (errors may not be Equatable)
-            return lhsMessage == rhsMessage
+        case (.error(let lhsError, let lhsMessage), .error(let rhsError, let rhsMessage)):
+            return lhsError == rhsError && lhsMessage == rhsMessage
         default:
             return false
         }

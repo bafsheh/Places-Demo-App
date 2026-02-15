@@ -6,7 +6,6 @@
 import Testing
 @testable import Places_Demo_App
 
-@MainActor
 @Suite("AccessibilityID locationRow and raw values")
 struct AccessibilityTests {
 

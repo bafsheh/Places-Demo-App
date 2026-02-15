@@ -10,8 +10,7 @@
 import Foundation
 @testable import Places_Demo_App
 
-/// Sample data for tests.
-@MainActor
+/// Sample data for tests (nonisolated; Location is Sendable).
 enum SampleData {
     /// Sample locations for testing
     static let locations: [Location] = [

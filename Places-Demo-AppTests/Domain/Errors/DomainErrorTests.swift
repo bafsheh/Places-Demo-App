@@ -6,7 +6,6 @@
 import Testing
 @testable import Places_Demo_App
 
-@MainActor
 @Suite("OpenWikipediaError errorDescription for all cases")
 struct DomainErrorTests {
 
