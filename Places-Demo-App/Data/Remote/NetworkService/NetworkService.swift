@@ -41,7 +41,7 @@ actor NetworkService: NetworkServiceProtocol {
     /// - Returns: Decoded value of type `T`.
     /// - Throws: `NetworkError` for non-HTTP response, non-2xx status, or decoding failure.
     func request<T: Decodable & Sendable>(_ endpoint: EndpointProtocol) async throws -> T {
-        let request = try await endpoint.urlRequest(with: configuration)
+        let request = try endpoint.urlRequest(with: configuration)
 
         let (data, response): (Data, URLResponse)
         do {
