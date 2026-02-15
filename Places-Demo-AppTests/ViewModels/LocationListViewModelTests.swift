@@ -36,7 +36,7 @@ struct LocationListViewModelTests {
 
     @Test("loadLocations sets state to error when fetch throws")
     func loadLocations_failure() async {
-        let deps = TestDependencies.makeWithErrors(fetchError: NetworkError.noData)
+        let deps = TestDependencies.makeWithErrors(fetchError: LocationFetchError.networkUnavailable)
         let viewModel = deps.makeLocationsListViewModel()
 
         await viewModel.loadLocations()

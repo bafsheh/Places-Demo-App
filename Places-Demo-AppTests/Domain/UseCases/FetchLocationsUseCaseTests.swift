@@ -26,21 +26,21 @@ struct FetchLocationsUseCaseTests {
         #expect(result.map { $0.name } == ["A", "B", "C"])
     }
 
-    @Test("execute throws when repository throws error")
+    @Test("execute throws when repository throws domain error")
     func execute_failure() async {
         let mockRepo = MockLocationRepository()
-        mockRepo.errorToThrow = NetworkError.noData
+        mockRepo.errorToThrow = LocationFetchError.networkUnavailable
         let useCase = FetchLocationsUseCase(repository: mockRepo)
 
         do {
             _ = try await useCase.execute()
             #expect(Bool(false), "Expected throw")
-        } catch let error as NetworkError {
-            if case .noData = error { } else {
-                #expect(Bool(false), "Expected NetworkError.noData, got \(error)")
+        } catch let error as LocationFetchError {
+            if case .networkUnavailable = error { } else {
+                #expect(Bool(false), "Expected LocationFetchError.networkUnavailable, got \(error)")
             }
         } catch {
-            #expect(Bool(false), "Expected NetworkError, got \(error)")
+            #expect(Bool(false), "Expected LocationFetchError, got \(error)")
         }
     }
 }

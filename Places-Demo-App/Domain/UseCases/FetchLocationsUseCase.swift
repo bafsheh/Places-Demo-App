@@ -36,7 +36,7 @@ final class FetchLocationsUseCase: FetchLocationsUseCaseProtocol {
     /// Fetches locations from the repository.
     ///
     /// - Returns: Array of domain `Location` entities.
-    /// - Throws: Errors propagated from the repository (e.g. `NetworkError`).
+    /// - Throws: Domain errors from the repository (e.g. `LocationFetchError`).
     func execute() async throws -> [Location] {
         try await repository.fetchLocations()
     }

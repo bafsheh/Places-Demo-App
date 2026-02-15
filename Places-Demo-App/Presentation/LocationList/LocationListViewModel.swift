@@ -97,9 +97,7 @@ final class LocationListViewModel {
 
     private static func userFacingMessage(for error: Error) -> String {
         switch error {
-        case is NetworkError:
-            return LocalizationHelper.Common.networkError
-        case is OpenWikipediaError:
+        case is LocationFetchError, is OpenWikipediaError:
             return error.localizedDescription
         default:
             return LocalizationHelper.Common.genericError

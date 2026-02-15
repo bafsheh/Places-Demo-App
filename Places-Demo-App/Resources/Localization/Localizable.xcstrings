@@ -561,6 +561,36 @@
         }
       }
     },
+    "error.locationFetch.networkUnavailable" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Network unavailable"
+          }
+        }
+      }
+    },
+    "error.locationFetch.invalidData" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invalid data"
+          }
+        }
+      }
+    },
+    "error.locationFetch.unknown" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Something went wrong"
+          }
+        }
+      }
+    },
     "location.unnamedLocation" : {
       "localizations" : {
         "en" : {

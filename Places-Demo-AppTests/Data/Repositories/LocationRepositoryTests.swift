@@ -39,7 +39,7 @@ struct LocationRepositoryTests {
         #expect(abs(r2.coordinate.longitude - 5.0) < 0.001)
     }
 
-    @Test("fetchLocations throws when data source throws")
+    @Test("fetchLocations throws domain LocationFetchError when data source throws NetworkError")
     func fetchLocations_failure() async {
         let mockDataSource = MockRemoteDataSource(errorToThrow: NetworkError.noData)
         let repository = LocationRepository(remoteDataSource: mockDataSource)
@@ -47,12 +47,12 @@ struct LocationRepositoryTests {
         do {
             _ = try await repository.fetchLocations()
             #expect(Bool(false), "Expected throw")
-        } catch let error as NetworkError {
-            if case .noData = error { } else {
-                #expect(Bool(false), "Expected NetworkError.noData, got \(error)")
+        } catch let error as LocationFetchError {
+            if case .networkUnavailable = error { } else {
+                #expect(Bool(false), "Expected LocationFetchError.networkUnavailable, got \(error)")
             }
         } catch {
-            #expect(Bool(false), "Expected NetworkError, got \(error)")
+            #expect(Bool(false), "Expected LocationFetchError, got \(error)")
         }
     }
 

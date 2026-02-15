@@ -27,9 +27,27 @@ final class LocationRepository: LocationRepositoryProtocol {
     /// Fetches locations from the remote source and maps them to domain entities.
     ///
     /// - Returns: Array of domain `Location` entities.
-    /// - Throws: Errors from the data source (e.g. network or decoding failures).
+    /// - Throws: Domain `LocationFetchError` so callers (e.g. use case, ViewModel) do not depend on Data-layer errors.
     func fetchLocations() async throws -> [Location] {
-        let dtos = try await remoteDataSource.fetchLocations()
-        return dtos.map { $0.toDomain() }
+        do {
+            let dtos = try await remoteDataSource.fetchLocations()
+            return dtos.map { $0.toDomain() }
+        } catch let error as NetworkError {
+            throw Self.mapToLocationFetchError(error)
+        } catch {
+            throw LocationFetchError.unknown
+        }
+    }
+
+    /// Maps Data-layer `NetworkError` to Domain `LocationFetchError` so the repository's public API is domain-only.
+    private static func mapToLocationFetchError(_ error: NetworkError) -> LocationFetchError {
+        switch error {
+        case .noData, .networkFailure, .httpError:
+            return .networkUnavailable
+        case .invalidURL, .decodingError:
+            return .invalidData
+        case .unknown:
+            return .unknown
+        }
     }
 }

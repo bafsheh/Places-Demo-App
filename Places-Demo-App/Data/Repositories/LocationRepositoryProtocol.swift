@@ -19,6 +19,6 @@ protocol LocationRepositoryProtocol: Sendable {
     /// Fetches all locations from the underlying source.
     ///
     /// - Returns: Array of domain `Location` entities.
-    /// - Throws: Errors from the data layer (e.g. `NetworkError`) when the fetch fails.
+    /// - Throws: Domain errors (e.g. `LocationFetchError`) when the fetch fails.
     func fetchLocations() async throws -> [Location]
 }
