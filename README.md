@@ -125,7 +125,7 @@ graph TB
         direction LR
         Entities["<b>Entities</b><br/>Location<br/>Coordinate<br/>DomainError"]
         UseCases["<b>Use Cases</b><br/>FetchLocations<br/>OpenWikipedia"]
-        Protocols["<b>Protocols</b><br/>LocationRepository<br/>OpenWikipediaPort"]
+        Protocols["<b>Protocols</b><br/>LocationRepository<br/>OpenWikipediaAtLocationPort"]
     end
     
     subgraph Data["💾 DATA LAYER"]

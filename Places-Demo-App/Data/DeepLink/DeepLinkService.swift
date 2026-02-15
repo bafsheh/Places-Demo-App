@@ -45,8 +45,6 @@ protocol URLOpening: Sendable {
 }
 
 /// Default implementation that uses `UIApplication.shared` to open URLs.
-///
-/// Only the actual `UIApplication.shared.open` call runs on the main actor; the type is nonisolated so callers can stay off the main thread.
 final class DefaultURLOpener: URLOpening, Sendable {
 
     /// Opens the URL via `UIApplication.shared.open(url)` (main-actor hop is internal).

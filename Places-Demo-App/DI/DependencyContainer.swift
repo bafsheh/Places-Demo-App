@@ -13,7 +13,7 @@ import UIKit
 
 /// Protocol for app dependency injection; only view/view model factories require main actor (Swift 6).
 ///
-/// Implementations provide the root view and view model factories. Production uses `DependencyContainer.live`; tests build a `Dependencies` in the test target. Factory methods that create UI types are `@MainActor`; the protocol itself is nonisolated so the container can be built off the main actor.
+/// Implementations provide the root view and view model factories. Production uses `DependencyContainer.live`; tests build a `Dependencies` in the test target. Factory methods that create UI types are `@MainActor`; the protocol itself the container can be built off the main actor.
 protocol AppDependenciesProtocol: Sendable {
 
     /// Builds the root list view with the given router and this dependencies instance (for sheet factory). Call from main actor (e.g. SwiftUI body).
@@ -62,10 +62,9 @@ struct Dependencies: Sendable, AppDependenciesProtocol {
 ///
 /// Composes network, repository, deep link adapter, and use case layers; exposes `live` as the single `Dependencies` instance.
 /// Wikipedia flow: `WikipediaDeepLinkService` is wrapped in `WikipediaDeepLinkAdapter` (implements `OpenWikipediaAtLocationPort`), then injected into `OpenWikipediaUseCase`. Tests build their own `Dependencies` with mocks.
-/// Main actor isolation is applied only where needed (e.g. `DefaultURLOpener`); network and repository layers are nonisolated.
 enum DependencyContainer {
 
-    // MARK: - Network (nonisolated)
+    // MARK: - Network
 
     private static let networkConfiguration = NetworkConfiguration.default
     private static let networkService: NetworkServiceProtocol = NetworkService(

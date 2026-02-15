@@ -63,7 +63,7 @@ struct Location: Identifiable, Equatable, Hashable, Sendable {
     /// This supports SwiftUI list identity semantics - when a location's data changes,
     /// SwiftUI uses the ID to track it, but changes to name/coordinates won't trigger
     /// Equatable-based updates. For value-based comparison, compare properties directly.
-    nonisolated static func == (lhs: Location, rhs: Location) -> Bool {
+    static func == (lhs: Location, rhs: Location) -> Bool {
         lhs.id == rhs.id
     }
 

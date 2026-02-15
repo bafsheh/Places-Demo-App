@@ -13,7 +13,6 @@ import Foundation
 ///
 /// Property names match the API (e.g. `lat`/`long`); use `toDomain()` to obtain a domain `Location` with a new UUID.
 /// Safe to use across isolation boundaries: value type, `Sendable`, immutable (`let` only). Decoded inside
-/// `NetworkService` (actor) and passed to nonisolated callers and then to `@MainActor` view model without data races.
 struct LocationDTO: Codable, Sendable {
 
     /// Optional display name from the API.
