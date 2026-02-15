@@ -14,7 +14,7 @@ import Foundation
 /// Used across the app for list display, add-location form, and deep linking to Wikipedia.
 /// Conforms to `Identifiable` (by `id`), `Equatable` (by `id`), and `Sendable` for safe use from async contexts.
 ///
-struct Location: Identifiable, Equatable, Sendable {
+struct Location: Identifiable, Equatable, Hashable, Sendable {
 
     /// Unique identifier for the location; defaults to a new UUID when created from user input.
     let id: UUID
@@ -57,7 +57,17 @@ struct Location: Identifiable, Equatable, Sendable {
         )
     }
 
+    /// Equality is identity-based (by UUID).
+    ///
+    /// Two locations with the same ID but different coordinates/names are considered equal.
+    /// This supports SwiftUI list identity semantics - when a location's data changes,
+    /// SwiftUI uses the ID to track it, but changes to name/coordinates won't trigger
+    /// Equatable-based updates. For value-based comparison, compare properties directly.
     nonisolated static func == (lhs: Location, rhs: Location) -> Bool {
         lhs.id == rhs.id
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
 }

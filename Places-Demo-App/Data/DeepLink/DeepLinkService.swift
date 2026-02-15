@@ -46,23 +46,27 @@ protocol URLOpening: Sendable {
 
 /// Default implementation that uses `UIApplication.shared` to open URLs.
 ///
-/// - Important: Must be used from the main actor; conforms to `URLOpening` for production. Tests inject a mock.
-@MainActor
-final class DefaultURLOpener: URLOpening {
+/// Only the actual `UIApplication.shared.open` call runs on the main actor; the type is nonisolated so callers can stay off the main thread.
+final class DefaultURLOpener: URLOpening, Sendable {
 
-    /// Opens the URL via `UIApplication.shared.open(url)`.
+    /// Opens the URL via `UIApplication.shared.open(url)` (main-actor hop is internal).
     ///
     /// - Parameter url: The URL to open.
     /// - Returns: Result of the system open call.
     func open(_ url: URL) async -> Bool {
-        await UIApplication.shared.open(url)
+        await withCheckedContinuation { continuation in
+            Task { @MainActor in
+                UIApplication.shared.open(url, options: [:]) { success in
+                    continuation.resume(returning: success)
+                }
+            }
+        }
     }
 }
 
 /// Contract for a generic deep link service that can open any URL.
 ///
 /// Used by Wikipedia-specific code to open `wikipedia://places?...`; other deep link types could use the same protocol.
-@MainActor
 protocol DeepLinkServiceProtocol: Sendable {
 
     /// Opens the given URL (e.g. Wikipedia Places, maps).
@@ -74,9 +78,8 @@ protocol DeepLinkServiceProtocol: Sendable {
 
 /// Generic deep link service that opens URLs via an injectable opener.
 ///
-/// Converts opener result to throws: if opener returns `false`, throws `DeepLinkError.appNotInstalled`. Used by `WikipediaDeepLinkService`.
-@MainActor
-final class DeepLinkService: DeepLinkServiceProtocol {
+/// Converts opener result to throws: if opener returns `false`, throws `DeepLinkError.appNotInstalled`. Used by `WikipediaDeepLinkService`. Runs off the main actor; opener may hop to main internally (e.g. DefaultURLOpener).
+final class DeepLinkService: DeepLinkServiceProtocol, Sendable {
 
     private let urlOpener: URLOpening
 

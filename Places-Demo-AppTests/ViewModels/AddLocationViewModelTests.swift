@@ -32,95 +32,90 @@ struct AddLocationViewModelTests {
     @Test("submit with latitude above 90 sets showError")
     func validation_invalidLatitude_tooHigh() async {
         var showErrorValue = false
-        _ = await withCheckedContinuation { (continuation: CheckedContinuation<Location?, Never>) in
+
+        let result = await withCheckedContinuation { (continuation: CheckedContinuation<Location?, Never>) in
             let vm = AddLocationViewModel(continuation: continuation)
             vm.name = "Test"
             vm.latitude = "91.0"
             vm.longitude = "4.0"
             vm.submit()
             showErrorValue = vm.showError
-            Task {
-                try? await Task.sleep(nanoseconds: 50_000_000)
-                continuation.resume(returning: nil)
-            }
+            vm.cancel()
         }
 
+        #expect(result == nil)
         #expect(showErrorValue)
     }
 
     @Test("submit with latitude below -90 sets showError")
     func validation_invalidLatitude_tooLow() async {
         var showErrorValue = false
-        _ = await withCheckedContinuation { (continuation: CheckedContinuation<Location?, Never>) in
+
+        let result = await withCheckedContinuation { (continuation: CheckedContinuation<Location?, Never>) in
             let vm = AddLocationViewModel(continuation: continuation)
             vm.name = "Test"
             vm.latitude = "-91.0"
             vm.longitude = "4.0"
             vm.submit()
             showErrorValue = vm.showError
-            Task {
-                try? await Task.sleep(nanoseconds: 50_000_000)
-                continuation.resume(returning: nil)
-            }
+            vm.cancel()
         }
 
+        #expect(result == nil)
         #expect(showErrorValue)
     }
 
     @Test("submit with longitude above 180 sets showError")
     func validation_invalidLongitude_tooHigh() async {
         var showErrorValue = false
-        _ = await withCheckedContinuation { (continuation: CheckedContinuation<Location?, Never>) in
+
+        let result = await withCheckedContinuation { (continuation: CheckedContinuation<Location?, Never>) in
             let vm = AddLocationViewModel(continuation: continuation)
             vm.name = "Test"
             vm.latitude = "52.0"
             vm.longitude = "181.0"
             vm.submit()
             showErrorValue = vm.showError
-            Task {
-                try? await Task.sleep(nanoseconds: 50_000_000)
-                continuation.resume(returning: nil)
-            }
+            vm.cancel()
         }
 
+        #expect(result == nil)
         #expect(showErrorValue)
     }
 
     @Test("submit with longitude below -180 sets showError")
     func validation_invalidLongitude_tooLow() async {
         var showErrorValue = false
-        _ = await withCheckedContinuation { (continuation: CheckedContinuation<Location?, Never>) in
+
+        let result = await withCheckedContinuation { (continuation: CheckedContinuation<Location?, Never>) in
             let vm = AddLocationViewModel(continuation: continuation)
             vm.name = "Test"
             vm.latitude = "52.0"
             vm.longitude = "-181.0"
             vm.submit()
             showErrorValue = vm.showError
-            Task {
-                try? await Task.sleep(nanoseconds: 50_000_000)
-                continuation.resume(returning: nil)
-            }
+            vm.cancel()
         }
 
+        #expect(result == nil)
         #expect(showErrorValue)
     }
 
     @Test("submit with non-numeric latitude sets showError")
     func validation_invalidNumber() async {
         var showErrorValue = false
-        _ = await withCheckedContinuation { (continuation: CheckedContinuation<Location?, Never>) in
+
+        let result = await withCheckedContinuation { (continuation: CheckedContinuation<Location?, Never>) in
             let vm = AddLocationViewModel(continuation: continuation)
             vm.name = "Test"
             vm.latitude = "not a number"
             vm.longitude = "4.0"
             vm.submit()
             showErrorValue = vm.showError
-            Task {
-                try? await Task.sleep(nanoseconds: 50_000_000)
-                continuation.resume(returning: nil)
-            }
+            vm.cancel()
         }
 
+        #expect(result == nil)
         #expect(showErrorValue)
     }
 

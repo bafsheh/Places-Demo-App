@@ -28,11 +28,11 @@ enum OpenWikipediaError: LocalizedError, Sendable {
     var errorDescription: String? {
         switch self {
         case .urlCreationFailed:
-            return "Failed to create URL"
+            return String(localized: "error.urlCreationFailed")
         case .cannotOpenURL:
-            return "Cannot open URL"
+            return String(localized: "error.cannotOpenURL")
         case .appNotInstalled(let name):
-            return name.map { "\($0) is not installed" } ?? "App is not installed"
+            return name.map { "\($0) is not installed" } ?? String(localized: "error.appNotInstalled")
         }
     }
 }

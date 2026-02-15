@@ -12,9 +12,8 @@ import Foundation
 /// Data transfer object for a single location as returned by the locations API.
 ///
 /// Property names match the API (e.g. `lat`/`long`); use `toDomain()` to obtain a domain `Location` with a new UUID.
-/// Explicit `nonisolated` Codable is required because the project uses `default-isolation=MainActor`,
-/// which makes compiler-synthesized conformances main-actor-isolated and incompatible with the
-/// `Sendable` constraint on `NetworkServiceProtocol.request`.
+/// Safe to use across isolation boundaries: value type, `Sendable`, immutable (`let` only). Decoded inside
+/// `NetworkService` (actor) and passed to nonisolated callers and then to `@MainActor` view model without data races.
 struct LocationDTO: Codable, Sendable {
 
     /// Optional display name from the API.
@@ -37,45 +36,12 @@ struct LocationDTO: Codable, Sendable {
             longitude: long
         )
     }
-
-    nonisolated init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        name = try container.decodeIfPresent(String.self, forKey: .name)
-        lat = try container.decode(Double.self, forKey: .lat)
-        long = try container.decode(Double.self, forKey: .long)
-    }
-
-    nonisolated func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encodeIfPresent(name, forKey: .name)
-        try container.encode(lat, forKey: .lat)
-        try container.encode(long, forKey: .long)
-    }
-
-    private enum CodingKeys: String, CodingKey {
-        case name, lat, long
-    }
 }
 
 /// Top-level response shape for the locations API; contains an array of location DTOs.
-///
-/// Explicit `nonisolated` Codable required due to project-wide `default-isolation=MainActor`.
+/// Value type, `Sendable`, immutable—safe to pass from `NetworkService` (actor) to callers on any isolation.
 struct LocationsResponse: Codable, Sendable {
 
     /// Array of location DTOs from the API.
     let locations: [LocationDTO]
-
-    nonisolated init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        locations = try container.decode([LocationDTO].self, forKey: .locations)
-    }
-
-    nonisolated func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(locations, forKey: .locations)
-    }
-
-    private enum CodingKeys: String, CodingKey {
-        case locations
-    }
 }

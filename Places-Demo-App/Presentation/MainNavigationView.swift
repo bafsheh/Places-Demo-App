@@ -25,8 +25,7 @@ struct MainNavigationView: View {
         self.dependencies = dependencies
     }
 
-    /// Production entry: uses live dependencies from `DependencyContainer.live`. Call from MainActor only (e.g. App body).
-    @MainActor
+    /// Production entry: uses live dependencies from `DependencyContainer.live`. Safe to call from any context; view creation happens on main when the body is evaluated.
     init() {
         self.init(dependencies: DependencyContainer.live)
     }

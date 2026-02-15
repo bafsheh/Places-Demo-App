@@ -36,15 +36,15 @@ enum NetworkError: LocalizedError, Sendable {
     var errorDescription: String? {
         switch self {
         case .invalidURL:
-            return "Invalid URL"
+            return String(localized: "error.invalidURL")
         case .noData:
-            return "No data received"
+            return String(localized: "error.noData")
         case .decodingError(let message):
-            return message.isEmpty ? "Decoding error" : message
+            return message.isEmpty ? String(localized: "error.decodingFailed") : message
         case .httpError(let statusCode):
             return "HTTP error: \(statusCode)"
         case .networkFailure(let message):
-            return message.isEmpty ? "Network failure" : message
+            return message.isEmpty ? String(localized: "error.requestFailed") : message
         case .unknown:
             return "Unknown error"
         }

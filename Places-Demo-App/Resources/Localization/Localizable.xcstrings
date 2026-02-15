@@ -491,6 +491,76 @@
         }
       }
     },
+    "error.appNotInstalled" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App is not installed"
+          }
+        }
+      }
+    },
+    "error.cannotOpenURL" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cannot open URL"
+          }
+        }
+      }
+    },
+    "error.decodingFailed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failed to decode response"
+          }
+        }
+      }
+    },
+    "error.invalidURL" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invalid URL"
+          }
+        }
+      }
+    },
+    "error.noData" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No data received"
+          }
+        }
+      }
+    },
+    "error.requestFailed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Network request failed"
+          }
+        }
+      }
+    },
+    "error.urlCreationFailed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failed to create URL"
+          }
+        }
+      }
+    },
     "location.unnamedLocation" : {
       "localizations" : {
         "en" : {

@@ -11,33 +11,27 @@ import Foundation
 import SwiftUI
 import UIKit
 
-/// Protocol for app dependency injection; view factories run on the main actor (Swift 6).
+/// Protocol for app dependency injection; only view/view model factories require main actor (Swift 6).
 ///
-/// Implementations provide the root view and view model factories so the app and tests can use different dependency graphs. Production uses `DependencyContainer.live`; tests build a `Dependencies` (or test double) in the test target.
-@MainActor
-protocol AppDependenciesProtocol {
+/// Implementations provide the root view and view model factories. Production uses `DependencyContainer.live`; tests build a `Dependencies` in the test target. Factory methods that create UI types are `@MainActor`; the protocol itself is nonisolated so the container can be built off the main actor.
+protocol AppDependenciesProtocol: Sendable {
 
-    /// Builds the root list view with the given router and this dependencies instance (for sheet factory).
-    ///
-    /// - Parameter router: App router for navigation and sheet presentation.
-    /// - Returns: The main locations list view configured with a view model and this factory.
+    /// Builds the root list view with the given router and this dependencies instance (for sheet factory). Call from main actor (e.g. SwiftUI body).
+    @MainActor
     func makeRootView(router: Router<PlacesRoute>) -> LocationListView
 
-    /// Builds the view model for the locations list (load, add, open Wikipedia).
-    ///
-    /// - Returns: A new `LocationListViewModel` using the injected use cases.
+    /// Builds the view model for the locations list (load, add, open Wikipedia). Call from main actor.
+    @MainActor
     func makeLocationsListViewModel() -> LocationListViewModel
 
-    /// Builds the view model for the add-location sheet.
-    ///
-    /// - Parameter continuation: Resumed once with the submitted `Location` on valid submit, or `nil` when the user cancels/dismisses.
-    /// - Returns: A new `AddLocationViewModel` that will complete the continuation.
+    /// Builds the view model for the add-location sheet. Call from main actor.
+    @MainActor
     func makeAddLocationViewModel(continuation: CheckedContinuation<Location?, Never>) -> AddLocationViewModel
 }
 
 /// Holds protocol-typed use cases and conforms to `AppDependenciesProtocol` for injection into views.
 ///
-/// Built by `DependencyContainer.live` in production; tests can construct a `Dependencies` with mock use cases (e.g. `TestDependencies.make()`). MainActor methods ensure view creation runs on the main thread.
+/// Built by `DependencyContainer.live` in production; tests can construct a `Dependencies` with mock use cases. Factory methods are `@MainActor` so view/view model creation runs on the main thread when called from SwiftUI.
 struct Dependencies: Sendable, AppDependenciesProtocol {
 
     let fetchLocationsUseCase: any FetchLocationsUseCaseProtocol
@@ -68,10 +62,10 @@ struct Dependencies: Sendable, AppDependenciesProtocol {
 ///
 /// Composes network, repository, deep link adapter, and use case layers; exposes `live` as the single `Dependencies` instance.
 /// Wikipedia flow: `WikipediaDeepLinkService` is wrapped in `WikipediaDeepLinkAdapter` (implements `OpenWikipediaAtLocationPort`), then injected into `OpenWikipediaUseCase`. Tests build their own `Dependencies` with mocks.
-@MainActor
+/// Main actor isolation is applied only where needed (e.g. `DefaultURLOpener`); network and repository layers are nonisolated.
 enum DependencyContainer {
 
-    // MARK: - Network
+    // MARK: - Network (nonisolated)
 
     private static let networkConfiguration = NetworkConfiguration.default
     private static let networkService: NetworkServiceProtocol = NetworkService(
@@ -80,32 +74,27 @@ enum DependencyContainer {
     private static let remoteDataSource: RemoteDataSourceProtocol = RemoteDataSource(
         networkService: networkService
     )
-
-    // MARK: - Domain (use cases)
-
     private static let locationRepository: LocationRepositoryProtocol = LocationRepository(
         remoteDataSource: remoteDataSource
-    )
-    private static let urlOpener: URLOpening = DefaultURLOpener()
-    private static let deepLinkService: DeepLinkServiceProtocol = DeepLinkService(urlOpener: urlOpener)
-    private static let wikipediaDeepLinkService: WikipediaDeepLinkServiceProtocol = WikipediaDeepLinkService(
-        deepLinkService: deepLinkService
-    )
-    private static let openWikipediaPort: OpenWikipediaAtLocationPort = WikipediaDeepLinkAdapter(
-        deepLinkService: wikipediaDeepLinkService
     )
     private static let fetchLocationsUseCase: FetchLocationsUseCaseProtocol = FetchLocationsUseCase(
         repository: locationRepository
     )
-    private static let openWikipediaUseCase: OpenWikipediaUseCaseProtocol = OpenWikipediaUseCase(
-        port: openWikipediaPort
-    )
 
     // MARK: - Presentation (Dependencies)
 
-    /// Live dependencies for production; use in the app entry point (e.g. `MainNavigationView()` which uses this internally). Tests use a `Dependencies` built in the test target (e.g. `TestDependencies.make()`).
-    static let live = Dependencies(
-        fetchLocationsUseCase: fetchLocationsUseCase,
-        openWikipediaUseCase: openWikipediaUseCase
-    )
+    /// Live dependencies for production; use in the app entry point (e.g. `MainNavigationView()`). Can be built off the main actor; only factory methods that create views/VMs require main.
+    static let live: Dependencies = {
+        let urlOpener: URLOpening = DefaultURLOpener()
+        let deepLinkService = DeepLinkService(urlOpener: urlOpener)
+        let wikipediaDeepLinkService = WikipediaDeepLinkService(deepLinkService: deepLinkService)
+        let openWikipediaPort: OpenWikipediaAtLocationPort = WikipediaDeepLinkAdapter(
+            deepLinkService: wikipediaDeepLinkService
+        )
+        let openWikipediaUseCase = OpenWikipediaUseCase(port: openWikipediaPort)
+        return Dependencies(
+            fetchLocationsUseCase: fetchLocationsUseCase,
+            openWikipediaUseCase: openWikipediaUseCase
+        )
+    }()
 }

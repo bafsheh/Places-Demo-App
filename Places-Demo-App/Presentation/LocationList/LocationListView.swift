@@ -90,7 +90,9 @@ struct LocationListView: View {
             }
         }
         .task {
-            await viewModel.loadLocations()
+            if case .idle = viewModel.state {
+                await viewModel.loadLocations()
+            }
         }
         .alert(LocalizationHelper.Places.openInWikipediaAlertTitle, isPresented: Binding(
             get: { viewModel.openLocationError != nil },
@@ -117,16 +119,20 @@ struct LocationListView: View {
     private func locationsList(_ locations: [Location]) -> some View {
         List {
             ForEach(locations) { location in
-                LocationRow(location: location)
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        Task {
-                            await viewModel.openLocation(location)
-                        }
+                Button {
+                    Task {
+                        await viewModel.openLocation(location)
                     }
+                } label: {
+                    LocationRow(location: location)
+                }
+                .buttonStyle(.plain)
             }
         }
         .listStyle(.insetGrouped)
+        .refreshable {
+            await viewModel.loadLocations()
+        }
         .accessibilityElement(children: .contain)
         .accessibilityLabel(Accessibility.Places.listLabel)
         .accessibilityIdentifier(AccessibilityID.placesList.rawValue)

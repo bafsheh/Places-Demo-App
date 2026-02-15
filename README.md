@@ -115,8 +115,8 @@ The app implements **Clean Architecture** with three distinct layers, ensuring s
 graph TB
     subgraph Presentation["🎨 PRESENTATION LAYER"]
         direction LR
-        Views["<b>Views</b><br/>RootView<br/>LocationListView<br/>AddLocationView"]
-        ViewModels["<b>ViewModels</b><br/>@MainActor<br/>ObservableObject"]
+        Views["<b>Views</b><br/>MainNavigationView<br/>LocationListView<br/>AddLocationView"]
+        ViewModels["<b>ViewModels</b><br/>@MainActor<br/>@Observable"]
         Router["<b>Router</b><br/>Type-safe<br/>Navigation"]
         ViewState["<b>ViewState</b><br/>Loading<br/>Loaded<br/>Error"]
     end
@@ -305,8 +305,9 @@ enum PlacesRoute: Hashable {
 }
 
 @MainActor
-final class Router<Route: Hashable>: ObservableObject {
-    @Published var path = NavigationPath()
+@Observable
+final class Router<Route: Hashable> {
+    var path: [Route] = []
     
     func navigate(to route: Route) {
         path.append(route)
@@ -335,7 +336,7 @@ final class WikipediaDeepLinkAdapter: OpenWikipediaAtLocationPort {
 ```
 Places-Demo-App/
 ├── 📱 Places-Demo-App/
-│   ├── Places_Demo_AppApp.swift          # App entry point
+│   ├── PlacesApp.swift                   # App entry point
 │   │
 │   ├── 🔧 DI/
 │   │   └── DependencyContainer.swift     # Dependency injection
@@ -372,7 +373,7 @@ Places-Demo-App/
 │   │       └── LocationRepository.swift
 │   │
 │   ├── 🎨 Presentation/
-│   │   ├── RootView.swift
+│   │   ├── MainNavigationView.swift
 │   │   ├── Common/
 │   │   │   ├── Router.swift
 │   │   │   ├── ViewState.swift
@@ -388,9 +389,10 @@ Places-Demo-App/
 │   │
 │   └── 📚 Resources/
 │       ├── Accessibility/
-│       │   └── AccessibilityID.swift
+│       │   └── Accessibility.swift
 │       ├── Localization/
-│       │   └── Localizable.xcstrings
+│       │   ├── Localizable.xcstrings
+│       │   └── LocalizationHelper+*.swift
 │       └── Assets.xcassets/
 │
 └── 🧪 Places-Demo-AppTests/
@@ -535,7 +537,8 @@ final class LocationListViewModelTests: XCTestCase {
 **Implementation:**
 - ✅ `async/await` for all asynchronous operations
 - ✅ `Actor` for thread-safe network operations
-- ✅ `@MainActor` for all UI components
+- ✅ `@MainActor` only where UI or main-thread state is touched (ViewModels, Router, view factories)
+- ✅ **Minimizing @MainActor:** Services (e.g. `DeepLinkService`, `DefaultURLOpener`) are nonisolated; they hop to main only inside async methods when calling UIKit (e.g. `Task { @MainActor in UIApplication.shared.open(...) }`). The DI protocol is nonisolated with `@MainActor` on factory methods that create views/VMs; `DependencyContainer.live` is nonisolated so the app can build the graph off the main actor.
 - ✅ `Sendable` conformance for data crossing concurrency boundaries
 - ✅ Strict concurrency checking enabled (`SWIFT_STRICT_CONCURRENCY = complete`)
 
@@ -551,8 +554,9 @@ actor NetworkService: NetworkServiceProtocol {
 
 // Main-thread UI updates with @MainActor
 @MainActor
-final class LocationListViewModel: ObservableObject {
-    @Published private(set) var state: ViewState<[Location]> = .idle
+@Observable
+final class LocationListViewModel {
+    private(set) var state: ViewState<[Location]> = .idle
     
     func loadLocations() async {
         state = .loading
@@ -578,7 +582,7 @@ final class LocationListViewModel: ObservableObject {
 
 ```swift
 LocationRow(location: location)
-    .accessibilityElement(children: .combine)
+    .accessibilityElement(children: .contain)
     .accessibilityLabel("\(location.name ?? "Unnamed"), \(location.formattedCoordinates)")
     .accessibilityHint(Accessibility.opensInWikipedia)
     .accessibilityIdentifier(AccessibilityID.locationRow(location.id))

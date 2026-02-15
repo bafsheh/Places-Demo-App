@@ -3,6 +3,7 @@
 //  Places-Demo-AppTests
 //
 
+import Foundation
 import Testing
 @testable import Places_Demo_App
 
@@ -24,9 +25,9 @@ struct NetworkErrorTests {
         #expect(NetworkError.decodingError("Bad JSON").errorDescription == "Bad JSON")
     }
 
-    @Test("decodingError with empty message returns Decoding error")
+    @Test("decodingError with empty message returns localized fallback")
     func decodingError_emptyMessage() {
-        #expect(NetworkError.decodingError("").errorDescription == "Decoding error")
+        #expect(NetworkError.decodingError("").errorDescription == "Failed to decode response")
     }
 
     @Test("httpError has correct errorDescription with status code")
@@ -39,9 +40,9 @@ struct NetworkErrorTests {
         #expect(NetworkError.networkFailure("Connection lost").errorDescription == "Connection lost")
     }
 
-    @Test("networkFailure with empty message returns Network failure")
+    @Test("networkFailure with empty message returns localized fallback")
     func networkFailure_emptyMessage() {
-        #expect(NetworkError.networkFailure("").errorDescription == "Network failure")
+        #expect(NetworkError.networkFailure("").errorDescription == "Network request failed")
     }
 
     @Test("unknown has correct errorDescription")
