@@ -32,7 +32,10 @@ final class LocationListViewModel {
     /// Locations added by the user that should survive reloads from the API.
     private var userAddedLocations: [Location] = []
 
-    /// Current load task; cancelled when a new load starts to prevent stale results.
+    /// Error to show in an alert when opening Wikipedia fails (e.g. app not installed). Does not replace the list.
+    private(set) var openLocationError: OpenWikipediaError?
+
+    /// Current load task; cancelled when a new load is started so the previous request is ended.
     private var loadTask: Task<Void, Never>?
 
     // MARK: - Lifecycle
@@ -53,31 +56,32 @@ final class LocationListViewModel {
     // MARK: - Public Methods
 
     /// Loads locations from the repository and updates `state` to loading then loaded or error.
-    ///
-    /// Cancels any in-flight load before starting a new one. `CancellationError` is silently ignored
-    /// so that a cancelled load does not flash an error to the user.
-    /// Call on appear and from retry button; errors are surfaced as `state = .error(error:message:)`.
+    /// Cancels any in-flight load so only the latest request applies; call on appear and from retry button.
     func loadLocations() async {
         loadTask?.cancel()
-        state = .loading
 
         let task = Task {
+            state = .loading
             do {
-                let locations = try await fetchLocationsUseCase.execute()
+                let list = try await fetchLocationsUseCase.execute()
                 guard !Task.isCancelled else { return }
-                locationList = locations + userAddedLocations
+
+                locationList = list + userAddedLocations
                 state = .loaded(locationList)
             } catch is CancellationError {
-                // Silently ignore — another load replaced this one.
+                // Ignore; another load was started.
             } catch {
                 guard !Task.isCancelled else { return }
-                await Logger.shared.log(error: error, context: "LocationListViewModel.loadLocations")
                 state = .error(error: error, message: Self.userFacingMessage(for: error))
             }
         }
+
         loadTask = task
         await task.value
-        if loadTask == task { loadTask = nil }
+
+        if loadTask == task {
+            loadTask = nil
+        }
     }
 
     /// Appends a user-added location to the list and updates `state` to loaded with the new list.
@@ -102,15 +106,19 @@ final class LocationListViewModel {
         }
     }
 
-    /// Opens Wikipedia at the given location; on failure updates `state` to error.
+    /// Opens Wikipedia at the given location; on failure sets `openLocationError` (shown as alert) and keeps `state` unchanged.
     ///
     /// - Parameter location: The location to show in Wikipedia Places.
     func openLocation(_ location: Location) async {
         do {
             try await openWikipediaUseCase.execute(location: location)
         } catch {
-            await Logger.shared.log(error: error, context: "LocationListViewModel.openLocation")
-            state = .error(error: error, message: Self.userFacingMessage(for: error))
+            openLocationError = error as? OpenWikipediaError ?? .cannotOpenURL
         }
+    }
+
+    /// Clears the open-in-Wikipedia error (e.g. when user dismisses the alert).
+    func dismissOpenLocationError() {
+        openLocationError = nil
     }
 }

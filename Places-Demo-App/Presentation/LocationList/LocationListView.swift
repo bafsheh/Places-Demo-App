@@ -14,7 +14,6 @@ import SwiftUI
 /// Drives UI from `viewModel.state` (idle/loading/loaded/error); presents add-location sheet via router; opens Wikipedia on row tap. Created by `Dependencies.makeRootView` and displayed as the root of the NavigationStack.
 ///
 struct LocationListView: View {
-    
     // MARK: - Properties
     
     @Bindable var router: Router<PlacesRoute>
@@ -92,6 +91,20 @@ struct LocationListView: View {
         }
         .task {
             await viewModel.loadLocations()
+        }
+        .alert(LocalizationHelper.Places.openInWikipediaAlertTitle, isPresented: Binding(
+            get: { viewModel.openLocationError != nil },
+            set: { if !$0 { viewModel.dismissOpenLocationError() } }
+        )) {
+            Button(LocalizationHelper.Places.openInWikipediaAlertDismiss) {
+                viewModel.dismissOpenLocationError()
+            }
+            .accessibilityHint(Accessibility.Places.openInWikipediaAlertDismissHint)
+            .accessibilityIdentifier(AccessibilityID.placesOpenInWikipediaAlertDismissButton.rawValue)
+        } message: {
+            if let error = viewModel.openLocationError {
+                Text(error.errorDescription ?? error.localizedDescription)
+            }
         }
     }
     

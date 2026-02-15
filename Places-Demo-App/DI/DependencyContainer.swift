@@ -103,7 +103,7 @@ enum DependencyContainer {
 
     // MARK: - Presentation (Dependencies)
 
-    /// Live dependencies for production; use in the app entry point (e.g. `RootView()` which uses this internally). Tests use a `Dependencies` built in the test target (e.g. `TestDependencies.make()`).
+    /// Live dependencies for production; use in the app entry point (e.g. `MainNavigationView()` which uses this internally). Tests use a `Dependencies` built in the test target (e.g. `TestDependencies.make()`).
     static let live = Dependencies(
         fetchLocationsUseCase: fetchLocationsUseCase,
         openWikipediaUseCase: openWikipediaUseCase

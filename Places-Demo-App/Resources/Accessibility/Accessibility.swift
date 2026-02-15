@@ -24,6 +24,7 @@ enum AccessibilityID: String {
 
     case placesList
     case placesAddButton
+    case placesOpenInWikipediaAlertDismissButton
 
     case errorViewRetryButton
     case loadingView

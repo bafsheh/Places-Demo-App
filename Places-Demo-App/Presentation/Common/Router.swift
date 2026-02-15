@@ -4,7 +4,7 @@
 //
 //  Purpose: App routes and generic router for NavigationStack path and sheet presentation.
 //  Dependencies: Observation.
-//  Usage: Router<PlacesRoute> owned by RootView; passed to LocationListView and destination views.
+//  Usage: Router<PlacesRoute> owned by MainNavigationView; passed to LocationListView and destination views.
 //
 
 import Foundation
@@ -12,7 +12,7 @@ import Observation
 
 /// App-specific route enum for navigation (push and sheet destinations).
 ///
-/// Add cases (e.g. `locationDetail(Location)`) when adding new screens; use with `Router<PlacesRoute>` and `PlacesRouteDestinationView`.
+/// Add cases (e.g. `locationDetail(Location)`) when adding new screens; use with Router; push destinations can be added via navigationDestination when new route cases exist.
 ///
 enum PlacesRoute: Hashable, Identifiable {
 

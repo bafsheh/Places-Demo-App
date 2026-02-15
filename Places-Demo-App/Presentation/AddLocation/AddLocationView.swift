@@ -62,7 +62,7 @@ struct AddLocationView: View {
                     Text(LocalizationHelper.AddLocation.latLongFooter)
                 }
             }
-            .accessibilityElement(children: .combine)
+            .accessibilityElement(children: .contain)
             .accessibilityLabel(Accessibility.AddLocation.formLabel)
             .accessibilityIdentifier(AccessibilityID.addLocationForm.rawValue)
             .navigationTitle(LocalizationHelper.AddLocation.title)

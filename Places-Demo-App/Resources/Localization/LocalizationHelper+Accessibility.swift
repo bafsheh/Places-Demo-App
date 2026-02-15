@@ -33,6 +33,7 @@ extension LocalizationHelper {
         enum Places {
             static var listLabel: String { String(localized: "accessibility.places.listLabel") }
             static var addButtonHint: String { String(localized: "accessibility.places.addButtonHint") }
+            static var openInWikipediaAlertDismissHint: String { String(localized: "accessibility.places.openInWikipediaAlertDismissHint") }
         }
     }
 }

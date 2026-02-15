@@ -122,22 +122,64 @@ struct LocationListViewModelTests {
         #expect(abs(opened.coordinate.latitude - 52.37) < 0.001)
     }
 
-    @Test("openLocation sets state to error when open use case throws")
+    @Test("openLocation sets openLocationError and leaves state unchanged when open use case throws")
     func openLocation_failure() async {
         let location = Location(name: "Paris", latitude: 48.85, longitude: 2.35)
         let deps = TestDependencies.makeWithErrors(openError: OpenWikipediaError.appNotInstalled(appName: "Wikipedia"))
         let viewModel = deps.makeLocationsListViewModel()
+        await viewModel.loadLocations()
+        guard case .loaded(let beforeLoad) = viewModel.state else {
+            #expect(Bool(false), "Expected loaded state before openLocation")
+            return
+        }
 
         await viewModel.openLocation(location)
 
-        guard case .error(let error, let message) = viewModel.state else {
-            #expect(Bool(false), "Expected state .error after openLocation failure, got \(viewModel.state)")
+        #expect(viewModel.openLocationError != nil, "Expected openLocationError to be set")
+        if case .appNotInstalled(let name) = viewModel.openLocationError {
+            #expect(name == "Wikipedia")
+        } else {
+            #expect(Bool(false), "Expected openLocationError .appNotInstalled(appName: \"Wikipedia\"), got \(String(describing: viewModel.openLocationError))")
+        }
+        guard case .loaded(let loaded) = viewModel.state else {
+            #expect(Bool(false), "Expected state to remain .loaded after openLocation failure, got \(viewModel.state)")
             return
         }
-        #expect(error is OpenWikipediaError, "Expected underlying error to be OpenWikipediaError")
-        #expect(
-            message.lowercased().contains("wikipedia") || message.lowercased().contains("installed"),
-            "Error message should reference app not installed, got: \(message)"
-        )
+        #expect(loaded.count == beforeLoad.count, "State should be unchanged")
+    }
+
+    @Test("dismissOpenLocationError clears openLocationError")
+    func dismissOpenLocationError_clearsError() async {
+        let deps = TestDependencies.makeWithErrors(openError: OpenWikipediaError.cannotOpenURL)
+        let viewModel = deps.makeLocationsListViewModel()
+        await viewModel.loadLocations()
+        let location = Location(name: "X", latitude: 0, longitude: 0)
+        await viewModel.openLocation(location)
+        #expect(viewModel.openLocationError != nil)
+
+        viewModel.dismissOpenLocationError()
+
+        #expect(viewModel.openLocationError == nil)
+    }
+
+    @Test("second loadLocations cancels first and final state is from second load")
+    func loadLocations_secondCallCancelsFirst() async {
+        let firstBatch = makeSampleLocations(count: 1)
+        let secondBatch = makeSampleLocations(count: 2)
+        let (deps, fetchMock, _) = TestDependencies.makeForLocationList(locations: firstBatch)
+        fetchMock.delayNanoseconds = 200_000_000 // 200ms so first load is in flight
+        let viewModel = deps.makeLocationsListViewModel()
+
+        async let firstLoad: () = viewModel.loadLocations()
+        fetchMock.locationsToReturn = secondBatch
+        fetchMock.delayNanoseconds = 0
+        await viewModel.loadLocations()
+        await firstLoad
+
+        guard case .loaded(let loaded) = viewModel.state else {
+            #expect(Bool(false), "Expected state .loaded after second load, got \(viewModel.state)")
+            return
+        }
+        #expect(loaded.count == 2, "Final state should be from second load (2 items), got \(loaded.count)")
     }
 }

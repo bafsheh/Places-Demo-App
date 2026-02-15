@@ -213,6 +213,22 @@
         }
       }
     },
+    "accessibility.places.openInWikipediaAlertDismissHint" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dismisses the error message"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sluit het foutbericht"
+          }
+        }
+      }
+    },
     "addLocation.add" : {
       "localizations" : {
         "en" : {
@@ -437,6 +453,9 @@
         }
       }
     },
+    "common.genericError" : {
+
+    },
     "common.loading" : {
       "localizations" : {
         "en" : {
@@ -452,6 +471,9 @@
           }
         }
       }
+    },
+    "common.networkError" : {
+
     },
     "common.retry" : {
       "localizations" : {
@@ -513,6 +535,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Locaties laden..."
+          }
+        }
+      }
+    },
+    "places.openInWikipediaAlertDismiss" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        }
+      }
+    },
+    "places.openInWikipediaAlertTitle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open in Wikipedia"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Openen in Wikipedia"
           }
         }
       }

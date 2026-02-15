@@ -62,6 +62,7 @@ final class DefaultURLOpener: URLOpening {
 /// Contract for a generic deep link service that can open any URL.
 ///
 /// Used by Wikipedia-specific code to open `wikipedia://places?...`; other deep link types could use the same protocol.
+@MainActor
 protocol DeepLinkServiceProtocol: Sendable {
 
     /// Opens the given URL (e.g. Wikipedia Places, maps).
