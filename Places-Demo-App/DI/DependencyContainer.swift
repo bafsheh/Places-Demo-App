@@ -11,33 +11,30 @@ import Foundation
 import SwiftUI
 import UIKit
 
-/// Protocol for app dependency injection; only view/view model factories require main actor (Swift 6).
+/// Protocol for app dependency injection; isolated to main actor so view/view model factories run on the main thread (Swift 6).
 ///
-/// Implementations provide the root view and view model factories. Production uses `DependencyContainer.live`; tests build a `Dependencies` in the test target. Factory methods that create UI types are `@MainActor`; the protocol itself the container can be built off the main actor.
+/// Implementations provide the root view and view model factories. Production uses `DependencyContainer.live`; tests build a `Dependencies` in the test target.
+@MainActor
 protocol AppDependenciesProtocol: Sendable {
 
     /// Builds the root list view with the given router and this dependencies instance (for sheet factory). Call from main actor (e.g. SwiftUI body).
-    @MainActor
     func makeRootView(router: Router<PlacesRoute>) -> LocationListView
 
     /// Builds the view model for the locations list (load, add, open Wikipedia). Call from main actor.
-    @MainActor
     func makeLocationsListViewModel() -> LocationListViewModel
 
     /// Builds the view model for the add-location sheet. Call from main actor.
-    @MainActor
-    func makeAddLocationViewModel(continuation: CheckedContinuation<Location?, Never>) -> AddLocationViewModel
+    func makeAddLocationViewModel(onComplete: @escaping (Location?) -> Void) -> AddLocationViewModel
 }
 
 /// Holds protocol-typed use cases and conforms to `AppDependenciesProtocol` for injection into views.
 ///
-/// Built by `DependencyContainer.live` in production; tests can construct a `Dependencies` with mock use cases. Factory methods are `@MainActor` so view/view model creation runs on the main thread when called from SwiftUI.
+/// Built by `DependencyContainer.live` in production; tests can construct a `Dependencies` with mock use cases. Protocol is `@MainActor` so view/view model creation runs on the main thread when called from SwiftUI.
 struct Dependencies: Sendable, AppDependenciesProtocol {
 
     let fetchLocationsUseCase: any FetchLocationsUseCaseProtocol
     let openWikipediaUseCase: any OpenWikipediaUseCaseProtocol
 
-    @MainActor
     func makeLocationsListViewModel() -> LocationListViewModel {
         LocationListViewModel(
             fetchLocationsUseCase: fetchLocationsUseCase,
@@ -45,14 +42,12 @@ struct Dependencies: Sendable, AppDependenciesProtocol {
         )
     }
 
-    @MainActor
     func makeRootView(router: Router<PlacesRoute>) -> LocationListView {
         LocationListView(router: router, viewModel: makeLocationsListViewModel(), dependencies: self)
     }
 
-    @MainActor
-    func makeAddLocationViewModel(continuation: CheckedContinuation<Location?, Never>) -> AddLocationViewModel {
-        AddLocationViewModel(continuation: continuation)
+    func makeAddLocationViewModel(onComplete: @escaping (Location?) -> Void) -> AddLocationViewModel {
+        AddLocationViewModel(onComplete: onComplete)
     }
 }
 

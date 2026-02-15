@@ -138,28 +138,3 @@ struct LocationListView: View {
         .accessibilityIdentifier(AccessibilityID.placesList.rawValue)
     }
 }
-
-// MARK: - Add Location Sheet Host
-
-/// Host that creates `AddLocationViewModel` with the continuation when the sheet appears and clears the binding.
-private struct AddLocationSheetHost: View {
-    @Binding var continuation: CheckedContinuation<Location?, Never>?
-    let dependencies: any AppDependenciesProtocol
-    @State private var viewModel: AddLocationViewModel?
-    
-    var body: some View {
-        Group {
-            if let viewModel {
-                AddLocationView(viewModel: viewModel)
-            } else {
-                ProgressView()
-                    .onAppear {
-                        if viewModel == nil, let cont = continuation {
-                            viewModel = dependencies.makeAddLocationViewModel(continuation: cont)
-                            continuation = nil
-                        }
-                    }
-            }
-        }
-    }
-}

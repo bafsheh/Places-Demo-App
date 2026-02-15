@@ -12,12 +12,12 @@ struct AddLocationViewModelTests {
 
     // MARK: - Dependencies.makeAddLocationViewModel
 
-    @Test("makeAddLocationViewModel returns view model that on valid submit resumes continuation with Location")
+    @Test("makeAddLocationViewModel returns view model that on valid submit calls onComplete with Location")
     func makeAddLocationViewModel_validSubmit() async throws {
         let deps = TestDependencies.make()
         var showErrorAfterSubmit = false
-        let resultOpt = await withCheckedContinuation { (continuation: CheckedContinuation<Location?, Never>) in
-            let vm = deps.makeAddLocationViewModel(continuation: continuation)
+        let resultOpt = await withCheckedContinuation { (cont: CheckedContinuation<Location?, Never>) in
+            let vm = deps.makeAddLocationViewModel(onComplete: { cont.resume(returning: $0) })
             vm.name = "Amsterdam"
             vm.latitude = "52.37"
             vm.longitude = "4.89"
@@ -32,11 +32,11 @@ struct AddLocationViewModelTests {
         #expect(!showErrorAfterSubmit)
     }
 
-    @Test("makeAddLocationViewModel returns view model that on cancel resumes continuation with nil")
+    @Test("makeAddLocationViewModel returns view model that on cancel calls onComplete with nil")
     func makeAddLocationViewModel_cancel() async {
         let deps = TestDependencies.make()
-        let result = await withCheckedContinuation { (continuation: CheckedContinuation<Location?, Never>) in
-            let vm = deps.makeAddLocationViewModel(continuation: continuation)
+        let result = await withCheckedContinuation { (cont: CheckedContinuation<Location?, Never>) in
+            let vm = deps.makeAddLocationViewModel(onComplete: { cont.resume(returning: $0) })
             vm.name = "Test"
             vm.latitude = "52.0"
             vm.longitude = "4.0"
@@ -47,11 +47,11 @@ struct AddLocationViewModelTests {
 
     // MARK: - Validation and behavior
 
-    @Test("submit with valid coordinates resumes continuation with Location and does not set showError")
+    @Test("submit with valid coordinates calls onComplete with Location and does not set showError")
     func validation_validCoordinates() async throws {
         var showErrorAfterSubmit = false
-        let resultOpt = await withCheckedContinuation { (continuation: CheckedContinuation<Location?, Never>) in
-            let vm = AddLocationViewModel(continuation: continuation)
+        let resultOpt = await withCheckedContinuation { (cont: CheckedContinuation<Location?, Never>) in
+            let vm = AddLocationViewModel(onComplete: { cont.resume(returning: $0) })
             vm.name = "Test"
             vm.latitude = "52.0"
             vm.longitude = "4.0"
@@ -70,8 +70,8 @@ struct AddLocationViewModelTests {
     func validation_invalidLatitude_tooHigh() async {
         var showErrorValue = false
 
-        let result = await withCheckedContinuation { (continuation: CheckedContinuation<Location?, Never>) in
-            let vm = AddLocationViewModel(continuation: continuation)
+        let result = await withCheckedContinuation { (cont: CheckedContinuation<Location?, Never>) in
+            let vm = AddLocationViewModel(onComplete: { cont.resume(returning: $0) })
             vm.name = "Test"
             vm.latitude = "91.0"
             vm.longitude = "4.0"
@@ -88,8 +88,8 @@ struct AddLocationViewModelTests {
     func validation_invalidLatitude_tooLow() async {
         var showErrorValue = false
 
-        let result = await withCheckedContinuation { (continuation: CheckedContinuation<Location?, Never>) in
-            let vm = AddLocationViewModel(continuation: continuation)
+        let result = await withCheckedContinuation { (cont: CheckedContinuation<Location?, Never>) in
+            let vm = AddLocationViewModel(onComplete: { cont.resume(returning: $0) })
             vm.name = "Test"
             vm.latitude = "-91.0"
             vm.longitude = "4.0"
@@ -106,8 +106,8 @@ struct AddLocationViewModelTests {
     func validation_invalidLongitude_tooHigh() async {
         var showErrorValue = false
 
-        let result = await withCheckedContinuation { (continuation: CheckedContinuation<Location?, Never>) in
-            let vm = AddLocationViewModel(continuation: continuation)
+        let result = await withCheckedContinuation { (cont: CheckedContinuation<Location?, Never>) in
+            let vm = AddLocationViewModel(onComplete: { cont.resume(returning: $0) })
             vm.name = "Test"
             vm.latitude = "52.0"
             vm.longitude = "181.0"
@@ -124,8 +124,8 @@ struct AddLocationViewModelTests {
     func validation_invalidLongitude_tooLow() async {
         var showErrorValue = false
 
-        let result = await withCheckedContinuation { (continuation: CheckedContinuation<Location?, Never>) in
-            let vm = AddLocationViewModel(continuation: continuation)
+        let result = await withCheckedContinuation { (cont: CheckedContinuation<Location?, Never>) in
+            let vm = AddLocationViewModel(onComplete: { cont.resume(returning: $0) })
             vm.name = "Test"
             vm.latitude = "52.0"
             vm.longitude = "-181.0"
@@ -142,8 +142,8 @@ struct AddLocationViewModelTests {
     func validation_invalidNumber() async {
         var showErrorValue = false
 
-        let result = await withCheckedContinuation { (continuation: CheckedContinuation<Location?, Never>) in
-            let vm = AddLocationViewModel(continuation: continuation)
+        let result = await withCheckedContinuation { (cont: CheckedContinuation<Location?, Never>) in
+            let vm = AddLocationViewModel(onComplete: { cont.resume(returning: $0) })
             vm.name = "Test"
             vm.latitude = "not a number"
             vm.longitude = "4.0"
@@ -156,11 +156,11 @@ struct AddLocationViewModelTests {
         #expect(showErrorValue)
     }
 
-    @Test("cancel resumes continuation with nil and does not set showError")
+    @Test("cancel calls onComplete with nil and does not set showError")
     func cancel() async {
         var showErrorValue = false
-        let result = await withCheckedContinuation { (continuation: CheckedContinuation<Location?, Never>) in
-            let vm = AddLocationViewModel(continuation: continuation)
+        let result = await withCheckedContinuation { (cont: CheckedContinuation<Location?, Never>) in
+            let vm = AddLocationViewModel(onComplete: { cont.resume(returning: $0) })
             vm.name = "Test"
             vm.latitude = "52.0"
             vm.longitude = "4.0"

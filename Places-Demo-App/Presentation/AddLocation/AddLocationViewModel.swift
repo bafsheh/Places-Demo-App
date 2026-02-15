@@ -2,7 +2,7 @@
 //  AddLocationViewModel.swift
 //  Places-Demo-App
 //
-//  Purpose: Form state and validation for add-location sheet; completes continuation with Location? (submit or cancel).
+//  Purpose: Form state and validation for add-location sheet; completes via onComplete(Location?) (submit or cancel).
 //  Dependencies: Observation, Location.
 //  Usage: Created by Dependencies.makeAddLocationViewModel; owned by AddLocationView.
 //
@@ -10,9 +10,9 @@
 import Foundation
 import Observation
 
-/// View model for the add-location sheet: form state (name, lat/long strings), validation, and async completion via continuation.
+/// View model for the add-location sheet: form state (name, lat/long strings), validation, and completion via callback.
 ///
-/// Validates that lat/long parse to doubles in valid ranges (-90...90, -180...180). On valid submit resumes the continuation with the `Location`; on cancel or dismiss resumes with `nil`. Sets `showError` for invalid input to drive the alert.
+/// Validates that lat/long parse to doubles in valid ranges (-90...90, -180...180). On valid submit calls `onComplete` with the `Location`; on cancel calls `onComplete(nil)`. Sets `showError` for invalid input to drive the alert. The view owns the continuation and passes a closure that resumes it so swipe-to-dismiss can also complete the flow in `onDismiss`.
 ///
 @MainActor
 @Observable
@@ -32,21 +32,20 @@ final class AddLocationViewModel {
     /// When `true`, the invalid-input alert is shown; set by `submit()` when validation fails.
     var showError = false
 
-    private var continuation: CheckedContinuation<Location?, Never>?
-    private var didResume = false
+    private var onComplete: ((Location?) -> Void)?
 
     // MARK: - Lifecycle
 
-    /// Creates the view model with a continuation that will be resumed with the submitted `Location` or `nil` on cancel.
+    /// Creates the view model with a completion handler invoked once with the submitted `Location` or `nil` on cancel.
     ///
-    /// - Parameter continuation: Resumed once with the created `Location` on valid submit, or `nil` when the user cancels/dismisses.
-    init(continuation: CheckedContinuation<Location?, Never>) {
-        self.continuation = continuation
+    /// - Parameter onComplete: Called once with the created `Location` on valid submit, or `nil` when the user cancels. The view uses this to resume its continuation and clear it.
+    init(onComplete: @escaping (Location?) -> Void) {
+        self.onComplete = onComplete
     }
 
     // MARK: - Public Methods
 
-    /// Validates lat/long; if valid, creates a `Location` (with domain `Coordinate`), resumes the continuation with it, and clears it; otherwise sets `showError = true`.
+    /// Validates lat/long; if valid, creates a `Location` (with domain `Coordinate`), calls `onComplete` with it, and clears it; otherwise sets `showError = true`.
     ///
     /// - Returns: `true` if validation passed and the location was submitted; `false` if validation failed.
     @discardableResult
@@ -64,21 +63,20 @@ final class AddLocationViewModel {
             latitude: lat,
             longitude: lon
         )
-        resume(returning: location)
+        complete(with: location)
         return true
     }
 
-    /// Resumes the continuation with `nil` (e.g. user cancelled or dismissed). No-op if already resumed.
+    /// Calls `onComplete(nil)` (e.g. user cancelled). No-op if already completed.
     func cancel() {
-        resume(returning: nil)
+        complete(with: nil)
     }
 
     // MARK: - Private
 
-    private func resume(returning value: Location?) {
-        guard !didResume, let cont = continuation else { return }
-        didResume = true
-        continuation = nil
-        cont.resume(returning: value)
+    private func complete(with value: Location?) {
+        guard let completion = onComplete else { return }
+        onComplete = nil
+        completion(value)
     }
 }

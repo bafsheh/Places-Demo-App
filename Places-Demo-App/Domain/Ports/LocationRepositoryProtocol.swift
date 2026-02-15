@@ -3,8 +3,8 @@
 //  Places-Demo-App
 //
 //  Purpose: Contract for fetching locations from a data source (remote or test double).
-//  Dependencies: None.
-//  Usage: Injected into FetchLocationsUseCase; implemented by LocationRepository.
+//  Dependencies: Location (Domain).
+//  Usage: Injected into FetchLocationsUseCase; implemented by LocationRepository (Data).
 //
 
 import Foundation
